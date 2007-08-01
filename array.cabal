@@ -1,0 +1,24 @@
+name:       array
+version:    0.1
+license:    BSD3
+license-file:    LICENSE
+maintainer:    libraries@haskell.org
+synopsis:    Arrays
+description:
+    Arrays.
+build-depends: base
+exposed-modules:
+    Data.Array
+    Data.Array.Base
+    Data.Array.Diff
+    Data.Array.IArray
+    Data.Array.IO
+    Data.Array.MArray
+    Data.Array.ST
+    Data.Array.Storable
+    Data.Array.Unboxed
+other-modules:
+    Data.Array.IO.Internals
+extensions: CPP
+ghc-options: -fglasgow-exts
+
