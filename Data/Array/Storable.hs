@@ -47,29 +47,32 @@ import Data.Array.MArray
 import Foreign hiding (newArray)
 
 -- |The array type
-data StorableArray i e = StorableArray !i !i !(ForeignPtr e)
+data StorableArray i e = StorableArray !i !i Int !(ForeignPtr e)
 
 instance Storable e => MArray StorableArray e IO where
-    getBounds (StorableArray l u _) = return (l,u)
+    getBounds (StorableArray l u _ _) = return (l,u)
+
+    getNumElements (StorableArray l u n _) = return n
 
     newArray (l,u) init = do
         fp <- mallocForeignPtrArray size
         withForeignPtr fp $ \a ->
             sequence_ [pokeElemOff a i init | i <- [0..size-1]]
-        return (StorableArray l u fp)
+        return (StorableArray l u size fp)
         where
         size = rangeSize (l,u)
 
     unsafeNewArray_ (l,u) = do
-        fp <- mallocForeignPtrArray (rangeSize (l,u))
-        return (StorableArray l u fp)
+        let n = rangeSize (l,u)
+        fp <- mallocForeignPtrArray n
+        return (StorableArray l u n fp)
 
     newArray_ = unsafeNewArray_
-        
-    unsafeRead (StorableArray _ _ fp) i =
+
+    unsafeRead (StorableArray _ _ _ fp) i =
         withForeignPtr fp $ \a -> peekElemOff a i
 
-    unsafeWrite (StorableArray _ _ fp) i e =
+    unsafeWrite (StorableArray _ _ _ fp) i e =
         withForeignPtr fp $ \a -> pokeElemOff a i e
 
 -- |The pointer to the array contents is obtained by 'withStorableArray'.
@@ -77,18 +80,18 @@ instance Storable e => MArray StorableArray e IO where
 -- The pointer should be used only during execution of the 'IO' action
 -- retured by the function passed as argument to 'withStorableArray'.
 withStorableArray :: StorableArray i e -> (Ptr e -> IO a) -> IO a
-withStorableArray (StorableArray _ _ fp) f = withForeignPtr fp f
+withStorableArray (StorableArray _ _ _ fp) f = withForeignPtr fp f
 
 -- |If you want to use it afterwards, ensure that you
 -- 'touchStorableArray' after the last use of the pointer,
 -- so the array is not freed too early.
 touchStorableArray :: StorableArray i e -> IO ()
-touchStorableArray (StorableArray _ _ fp) = touchForeignPtr fp
+touchStorableArray (StorableArray _ _ _ fp) = touchForeignPtr fp
 
 -- |Construct a 'StorableArray' from an arbitrary 'ForeignPtr'.  It is
 -- the caller's responsibility to ensure that the 'ForeignPtr' points to
 -- an area of memory sufficient for the specified bounds.
-unsafeForeignPtrToStorableArray 
-   :: ForeignPtr e -> (i,i) -> IO (StorableArray i e)
+unsafeForeignPtrToStorableArray
+   :: Ix i => ForeignPtr e -> (i,i) -> IO (StorableArray i e)
 unsafeForeignPtrToStorableArray p (l,u) =
-   return (StorableArray l u p)
+   return (StorableArray l u (rangeSize (l,u)) p)

@@ -128,10 +128,10 @@ hGetArray
 		-- read, which might be smaller than the number requested
 		-- if the end of file was reached.
 
-hGetArray handle (IOUArray (STUArray l u ptr)) count
+hGetArray handle (IOUArray (STUArray l u n ptr)) count
   | count == 0
   = return 0
-  | count < 0 || count > rangeSize (l,u)
+  | count < 0 || count > n
   = illegalBufferSize handle "hGetArray" count
   | otherwise = do
       wantReadableHandle "hGetArray" handle $ 
@@ -180,10 +180,10 @@ hPutArray
 	-> Int				-- ^ Number of 'Word8's to write
 	-> IO ()
 
-hPutArray handle (IOUArray (STUArray l u raw)) count
+hPutArray handle (IOUArray (STUArray l u n raw)) count
   | count == 0
   = return ()
-  | count < 0 || count > rangeSize (l,u)
+  | count < 0 || count > n
   = illegalBufferSize handle "hPutArray" count
   | otherwise
    = do wantWritableHandle "hPutArray" handle $ 
