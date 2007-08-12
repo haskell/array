@@ -1,4 +1,3 @@
-{-# OPTIONS_GHC -fno-implicit-prelude #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Array 
@@ -58,7 +57,7 @@ module  Data.Array
 import Data.Ix
 
 #ifdef __GLASGOW_HASKELL__
-import GHC.Arr		        -- Most of the hard work is done here
+import GHC.Arr                  -- Most of the hard work is done here
 import Data.Generics.Basics     -- To provide a Data instance
 import Data.Generics.Instances  -- To provide a Data instance
 import GHC.Err ( error )        -- Needed for Data instance
@@ -72,7 +71,10 @@ import Hugs.Array
 import Array		-- Haskell'98 arrays
 #endif
 
+import Control.Applicative
+import Data.Foldable
 import Data.Typeable
+import Data.Traversable
 
 {- $intro
 Haskell provides indexable /arrays/, which may be thought of as functions
@@ -86,3 +88,10 @@ Since most array functions involve the class 'Ix', this module is exported
 from "Data.Array" so that modules need not import both "Data.Array" and
 "Data.Ix".
 -}
+
+instance Ix i => Foldable (Array i) where
+    foldr f z = Prelude.foldr f z . elems
+
+instance Ix i => Traversable (Array i) where
+    traverse f arr = listArray (bounds arr) <$> traverse f (elems arr)
+
