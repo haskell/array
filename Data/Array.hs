@@ -69,7 +69,7 @@ import Hugs.Array
 
 #ifdef __NHC__
 import Array		-- Haskell'98 arrays
-#endif
+#else
 
 import Control.Applicative
 import Data.Foldable
@@ -95,3 +95,4 @@ instance Ix i => Foldable (Array i) where
 instance Ix i => Traversable (Array i) where
     traverse f arr = listArray (bounds arr) <$> traverse f (elems arr)
 
+#endif
