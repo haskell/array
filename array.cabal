@@ -20,5 +20,6 @@ exposed-modules:
 other-modules:
     Data.Array.IO.Internals
 extensions: CPP
+include-dirs: include
 ghc-options: -fglasgow-exts
 
