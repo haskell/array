@@ -3,9 +3,11 @@ version:    0.1
 license:    BSD3
 license-file:    LICENSE
 maintainer:    libraries@haskell.org
-synopsis:    Arrays
+synopsis:   Mutable and immutable arrays
 description:
-    Arrays.
+    This package defines the classes @IArray@ of immutable arrays and
+    @MArray@ of arrays mutable within appropriate monads, as well as
+    some instances of these classes.
 build-depends: base
 exposed-modules:
     Data.Array
