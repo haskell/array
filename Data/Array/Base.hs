@@ -57,7 +57,9 @@ import Hugs.ByteArray
 import Data.Typeable
 #include "Typeable.h"
 
+#ifdef __GLASGOW_HASKELL__
 #include "MachDeps.h"
+#endif
 
 -----------------------------------------------------------------------------
 -- Class of immutable arrays
