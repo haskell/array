@@ -1492,10 +1492,10 @@ unsafeReadMBArray (STUArray _ _ _ marr) = readMutableByteArray marr
 unsafeWriteMBArray :: Storable e => STUArray s i e -> Int -> e -> ST s ()
 unsafeWriteMBArray (STUArray _ _ _ marr) = writeMutableByteArray marr
 
-getBoundsMBArray :: Storable e => STUArray s i e -> (i, i)
+getBoundsMBArray :: Storable e => STUArray s i e -> ST s (i, i)
 getBoundsMBArray (STUArray l u _ _) = return (l,u)
 
-getNumElementsMBArray :: Storable e => STUArray s i e -> Int
+getNumElementsMBArray :: Storable e => STUArray s i e -> ST s Int
 getNumElementsMBArray (STUArray _ _ n _) = return n
 
 instance MArray (STUArray s) Bool (ST s) where
