@@ -77,6 +77,9 @@ newtype IOUArray i e = IOUArray (STUArray RealWorld i e)
 
 INSTANCE_TYPEABLE2(IOUArray,iOUArrayTc,"IOUArray")
 
+instance Eq (IOUArray i e) where
+    IOUArray s1 == IOUArray s2  =  s1 == s2
+
 instance MArray IOUArray Bool IO where
     {-# INLINE getBounds #-}
     getBounds (IOUArray arr) = stToIO $ getBounds arr

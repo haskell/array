@@ -1115,6 +1115,10 @@ data STUArray s i a = STUArray !i !i !Int !(MutableByteArray s)
 
 INSTANCE_TYPEABLE3(STUArray,stUArrayTc,"STUArray")
 
+instance Eq (STUArray s i e) where
+    STUArray _ _ _ arr1# == STUArray _ _ _ arr2# =
+        sameMutableByteArray# arr1# arr2#
+
 #ifdef __GLASGOW_HASKELL__
 {-# INLINE unsafeNewArraySTUArray_ #-}
 unsafeNewArraySTUArray_ :: Ix i
