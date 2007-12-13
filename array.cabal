@@ -9,19 +9,24 @@ description:
     @MArray@ of arrays mutable within appropriate monads, as well as
     some instances of these classes.
 build-depends: base
-exposed-modules:
-    Data.Array
-    Data.Array.Base
-    Data.Array.Diff
-    Data.Array.IArray
-    Data.Array.IO
-    Data.Array.MArray
-    Data.Array.ST
-    Data.Array.Storable
-    Data.Array.Unboxed
-other-modules:
-    Data.Array.IO.Internals
-extensions: CPP
-include-dirs: include
-ghc-options: -fglasgow-exts
-
+library {
+  if impl(nhc98)
+    exposed-modules:
+      Data.Array
+  else
+    exposed-modules:
+      Data.Array
+      Data.Array.Base
+      Data.Array.Diff
+      Data.Array.IArray
+      Data.Array.IO
+      Data.Array.MArray
+      Data.Array.ST
+      Data.Array.Storable
+      Data.Array.Unboxed
+    other-modules:
+      Data.Array.IO.Internals
+  extensions: CPP
+  include-dirs: include
+  ghc-options: -fglasgow-exts
+}
