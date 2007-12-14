@@ -8,8 +8,8 @@ description:
     This package defines the classes @IArray@ of immutable arrays and
     @MArray@ of arrays mutable within appropriate monads, as well as
     some instances of these classes.
-build-depends: base
 library {
+  build-depends: base
   if impl(nhc98)
     exposed-modules:
       Data.Array
