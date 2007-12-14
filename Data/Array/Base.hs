@@ -1680,12 +1680,10 @@ freeze :: (Ix i, MArray a e m, IArray b e) => a i e -> m (b i e)
 freeze marr = do
   (l,u) <- getBounds marr
   n <- getNumElements marr
-  ies <- sequence [do e <- unsafeRead marr i; return (i,e)
-                   | i <- [0 .. n - 1]]
-  -- The old array may be lying about the number of elements in
-  -- (l,u), so recalculate it to be safe.
-  let n' = safeRangeSize (l,u)
-  return (unsafeArray (l,u) ies)
+  es <- mapM (unsafeRead marr) [0 .. n - 1]
+  -- The old array and index might not be well-behaved, so we need to
+  -- use the safe array creation function here.
+  return (listArray (l,u) es)
 
 #ifdef __GLASGOW_HASKELL__
 freezeSTUArray :: Ix i => STUArray s i e -> ST s (UArray i e)
