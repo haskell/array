@@ -119,6 +119,9 @@ type DiffUArray = IOToDiffArray IOUArray
 instance (Ix ix, Show ix, Show e) => Show (DiffArray ix e) where
   showsPrec = showsIArray
 
+instance (Ix ix, Show ix) => Show (DiffUArray ix Bool) where
+  showsPrec = showsIArray
+
 instance (Ix ix, Show ix) => Show (DiffUArray ix Char) where
   showsPrec = showsIArray
 
@@ -167,6 +170,13 @@ instance IArray (IOToDiffArray IOArray) e where
     unsafeArray   lu ies = unsafePerformIO $ newDiffArray lu ies
     unsafeAt      a i    = unsafePerformIO $ a `readDiffArray` i
     unsafeReplace a ies  = unsafePerformIO $ a `replaceDiffArray1` ies
+
+instance IArray (IOToDiffArray IOUArray) Bool where
+    bounds        a      = unsafePerformIO $ boundsDiffArray a
+    numElements   a      = unsafePerformIO $ numElementsDiffArray a
+    unsafeArray   lu ies = unsafePerformIO $ newDiffArray lu ies
+    unsafeAt      a i    = unsafePerformIO $ a `readDiffArray` i
+    unsafeReplace a ies  = unsafePerformIO $ a `replaceDiffArray2` ies
 
 instance IArray (IOToDiffArray IOUArray) Char where
     bounds        a      = unsafePerformIO $ boundsDiffArray a
