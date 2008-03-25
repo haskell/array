@@ -8,14 +8,16 @@ description:
     This package defines the classes @IArray@ of immutable arrays and
     @MArray@ of arrays mutable within appropriate monads, as well as
     some instances of these classes.
-library {
+cabal-version: >=1.2
+build-type: Simple
+
+library
   build-depends: base
-  if impl(nhc98)
-    exposed-modules:
+  exposed-modules:
       Data.Array
-  else
+  extensions: CPP
+  if !impl(nhc98)
     exposed-modules:
-      Data.Array
       Data.Array.Base
       Data.Array.Diff
       Data.Array.IArray
@@ -26,7 +28,16 @@ library {
       Data.Array.Unboxed
     other-modules:
       Data.Array.IO.Internals
-  extensions: CPP
+    extensions:
+      MultiParamTypeClasses,
+      FlexibleContexts,
+      FlexibleInstances,
+      TypeSynonymInstances
+  if impl(ghc)
+    extensions:
+      Rank2Types,
+      MagicHash,
+      UnboxedTuples,
+      ForeignFunctionInterface,
+      UnliftedFFITypes
   include-dirs: include
-  ghc-options: -fglasgow-exts
-}
