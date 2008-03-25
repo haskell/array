@@ -57,10 +57,10 @@ module  Data.Array
 import Data.Ix
 
 #ifdef __GLASGOW_HASKELL__
-import GHC.Arr                  -- Most of the hard work is done here
-import Data.Generics.Basics     -- To provide a Data instance
-import Data.Generics.Instances  -- To provide a Data instance
-import GHC.Err ( error )        -- Needed for Data instance
+import GHC.Arr                    -- Most of the hard work is done here
+import Data.Generics.Basics    () -- To provide a Data instance
+import Data.Generics.Instances () -- To provide a Data instance
+import GHC.Err ( error )          -- Needed for Data instance
 #endif
 
 #ifdef __HUGS__
@@ -71,9 +71,9 @@ import Hugs.Array
 import Array		-- Haskell'98 arrays
 #else
 
-import Data.Foldable
-import Data.Typeable
-import Data.Traversable
+import Data.Foldable    ( Foldable(foldr) )
+import Data.Typeable    ()                        -- For the Typeable instance
+import Data.Traversable ( Traversable(traverse) )
 
 {- $intro
 Haskell provides indexable /arrays/, which may be thought of as functions
