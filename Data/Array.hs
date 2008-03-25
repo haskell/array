@@ -71,7 +71,6 @@ import Hugs.Array
 import Array		-- Haskell'98 arrays
 #else
 
-import Control.Applicative
 import Data.Foldable
 import Data.Typeable
 import Data.Traversable
@@ -93,6 +92,6 @@ instance Ix i => Foldable (Array i) where
     foldr f z = Prelude.foldr f z . elems
 
 instance Ix i => Traversable (Array i) where
-    traverse f arr = listArray (bounds arr) <$> traverse f (elems arr)
+    traverse f arr = listArray (bounds arr) `fmap` traverse f (elems arr)
 
 #endif
