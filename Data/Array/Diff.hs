@@ -111,7 +111,7 @@ type DiffArray  = IOToDiffArray IOArray
 type DiffUArray = IOToDiffArray IOUArray
 
 -- Having 'MArray a e IO' in instance context would require
--- -fallow-undecidable-instances, so each instance is separate here.
+-- -XUndecidableInstances, so each instance is separate here.
 
 ------------------------------------------------------------------------
 -- Showing DiffArrays
