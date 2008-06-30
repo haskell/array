@@ -52,12 +52,12 @@ data StorableArray i e = StorableArray !i !i Int !(ForeignPtr e)
 instance Storable e => MArray StorableArray e IO where
     getBounds (StorableArray l u _ _) = return (l,u)
 
-    getNumElements (StorableArray l u n _) = return n
+    getNumElements (StorableArray _l _u n _) = return n
 
-    newArray (l,u) init = do
+    newArray (l,u) initialValue = do
         fp <- mallocForeignPtrArray size
         withForeignPtr fp $ \a ->
-            sequence_ [pokeElemOff a i init | i <- [0..size-1]]
+            sequence_ [pokeElemOff a i initialValue | i <- [0..size-1]]
         return (StorableArray l u size fp)
         where
         size = rangeSize (l,u)

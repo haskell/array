@@ -75,7 +75,6 @@ module Data.Array.Diff (
 
 import Prelude
 
-import Data.Ix
 import Data.Array.Base
 import Data.Array.IArray
 import Data.Array.IO
@@ -85,7 +84,7 @@ import Foreign.StablePtr  ( StablePtr )
 import Data.Int           ( Int8,  Int16,  Int32,  Int64 )
 import Data.Word          ( Word, Word8, Word16, Word32, Word64 )
 
-import System.IO.Unsafe	  ( unsafePerformIO )
+import System.IO.Unsafe   ( unsafePerformIO )
 import Control.Exception  ( evaluate )
 import Control.Concurrent.MVar ( MVar, newMVar, takeMVar, putMVar, readMVar )
 
@@ -366,9 +365,9 @@ replaceDiffArray2 :: (MArray a e IO, Ix i)
                 => IOToDiffArray a i e
                 -> [(Int, e)]
                 -> IO (IOToDiffArray a i e)
-a `replaceDiffArray2` ies = do
+arr `replaceDiffArray2` ies = do
     mapM_ (\(a,b) -> do evaluate a; evaluate b) ies
-    a `replaceDiffArray` ies
+    arr `replaceDiffArray` ies
 
 
 boundsDiffArray :: (MArray a e IO, Ix ix)

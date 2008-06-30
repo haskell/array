@@ -1,5 +1,11 @@
-{-# OPTIONS_GHC -XNoBangPatterns #-}
+{-# OPTIONS_GHC -XNoBangPatterns -fno-warn-unused-imports #-}
 {-# OPTIONS_HADDOCK hide #-}
+-- XXX With a GHC 6.9 we get a spurious
+-- Data/Array/Base.hs:26:0:
+--     Warning: Module `Data.Ix' is imported, but nothing from it is used,
+--                except perhaps instances visible in `Data.Ix'
+--              To suppress this warning, use: import Data.Ix()
+-- The -fno-warn-unused-imports works around that bug
 
 -----------------------------------------------------------------------------
 -- |
@@ -23,11 +29,8 @@ import Prelude
 
 import Control.Monad.ST.Lazy ( strictToLazyST )
 import qualified Control.Monad.ST.Lazy as Lazy (ST)
-import Data.Ix		( Ix, range, index, rangeSize )
-import Data.Int
-import Data.Word
+import Data.Ix ( Ix, range, index, rangeSize )
 import Foreign.C.Types
-import Foreign.Ptr
 import Foreign.StablePtr
 
 #ifdef __GLASGOW_HASKELL__
@@ -43,6 +46,10 @@ import GHC.Stable	( StablePtr(..) )
 import GHC.Int		( Int8(..),  Int16(..),  Int32(..),  Int64(..) )
 import GHC.Word		( Word8(..), Word16(..), Word32(..), Word64(..) )
 import GHC.IOBase       ( IO(..) )
+#else
+import Data.Int
+import Data.Word
+import Foreign.Ptr
 #endif
 
 #ifdef __HUGS__
@@ -296,7 +303,7 @@ indices arr = case bounds arr of (l,u) -> range (l,u)
 -- as their indices.
 elems :: (IArray a e, Ix i) => a i e -> [e]
 elems arr = case bounds arr of
-    (l,u) -> [unsafeAt arr i | i <- [0 .. numElements arr - 1]]
+    (_l, _u) -> [unsafeAt arr i | i <- [0 .. numElements arr - 1]]
 
 {-# INLINE assocs #-}
 -- | Returns the contents of an array as a list of associations.
@@ -325,9 +332,9 @@ accumArray :: (IArray a e, Ix i)
            -> (i,i)              -- ^ The bounds of the array
            -> [(i, e')]          -- ^ List of associations
            -> a i e              -- ^ Returns: the array
-accumArray f init (l,u) ies =
+accumArray f initialValue (l,u) ies =
     let n = safeRangeSize (l, u)
-    in unsafeAccumArray f init (l,u)
+    in unsafeAccumArray f initialValue (l,u)
                         [(safeIndex (l,u) n i, e) | (i, e) <- ies]
 
 {-# INLINE (//) #-}
@@ -474,8 +481,8 @@ unsafeAccumUArray f arr ies = do
 {-# INLINE unsafeAccumArrayUArray #-}
 unsafeAccumArrayUArray :: (MArray (STUArray s) e (ST s), Ix i)
                        => (e -> e' -> e) -> e -> (i,i) -> [(Int, e')] -> ST s (UArray i e)
-unsafeAccumArrayUArray f init (l,u) ies = do
-    marr <- newArray (l,u) init
+unsafeAccumArrayUArray f initialValue (l,u) ies = do
+    marr <- newArray (l,u) initialValue
     sequence_ [do
         old <- unsafeRead marr i
         unsafeWrite marr i (f old new)
@@ -554,7 +561,7 @@ instance IArray UArray Bool where
     {-# INLINE unsafeAccum #-}
     unsafeAccum f arr ies = runST (unsafeAccumUArray f arr ies)
     {-# INLINE unsafeAccumArray #-}
-    unsafeAccumArray f init lu ies = runST (unsafeAccumArrayUArray f init lu ies)
+    unsafeAccumArray f initialValue lu ies = runST (unsafeAccumArrayUArray f initialValue lu ies)
 
 instance IArray UArray Char where
     {-# INLINE bounds #-}
@@ -575,7 +582,7 @@ instance IArray UArray Char where
     {-# INLINE unsafeAccum #-}
     unsafeAccum f arr ies = runST (unsafeAccumUArray f arr ies)
     {-# INLINE unsafeAccumArray #-}
-    unsafeAccumArray f init lu ies = runST (unsafeAccumArrayUArray f init lu ies)
+    unsafeAccumArray f initialValue lu ies = runST (unsafeAccumArrayUArray f initialValue lu ies)
 
 instance IArray UArray Int where
     {-# INLINE bounds #-}
@@ -596,7 +603,7 @@ instance IArray UArray Int where
     {-# INLINE unsafeAccum #-}
     unsafeAccum f arr ies = runST (unsafeAccumUArray f arr ies)
     {-# INLINE unsafeAccumArray #-}
-    unsafeAccumArray f init lu ies = runST (unsafeAccumArrayUArray f init lu ies)
+    unsafeAccumArray f initialValue lu ies = runST (unsafeAccumArrayUArray f initialValue lu ies)
 
 instance IArray UArray Word where
     {-# INLINE bounds #-}
@@ -617,7 +624,7 @@ instance IArray UArray Word where
     {-# INLINE unsafeAccum #-}
     unsafeAccum f arr ies = runST (unsafeAccumUArray f arr ies)
     {-# INLINE unsafeAccumArray #-}
-    unsafeAccumArray f init lu ies = runST (unsafeAccumArrayUArray f init lu ies)
+    unsafeAccumArray f initialValue lu ies = runST (unsafeAccumArrayUArray f initialValue lu ies)
 
 instance IArray UArray (Ptr a) where
     {-# INLINE bounds #-}
@@ -638,7 +645,7 @@ instance IArray UArray (Ptr a) where
     {-# INLINE unsafeAccum #-}
     unsafeAccum f arr ies = runST (unsafeAccumUArray f arr ies)
     {-# INLINE unsafeAccumArray #-}
-    unsafeAccumArray f init lu ies = runST (unsafeAccumArrayUArray f init lu ies)
+    unsafeAccumArray f initialValue lu ies = runST (unsafeAccumArrayUArray f initialValue lu ies)
 
 instance IArray UArray (FunPtr a) where
     {-# INLINE bounds #-}
@@ -659,7 +666,7 @@ instance IArray UArray (FunPtr a) where
     {-# INLINE unsafeAccum #-}
     unsafeAccum f arr ies = runST (unsafeAccumUArray f arr ies)
     {-# INLINE unsafeAccumArray #-}
-    unsafeAccumArray f init lu ies = runST (unsafeAccumArrayUArray f init lu ies)
+    unsafeAccumArray f initialValue lu ies = runST (unsafeAccumArrayUArray f initialValue lu ies)
 
 instance IArray UArray Float where
     {-# INLINE bounds #-}
@@ -680,7 +687,7 @@ instance IArray UArray Float where
     {-# INLINE unsafeAccum #-}
     unsafeAccum f arr ies = runST (unsafeAccumUArray f arr ies)
     {-# INLINE unsafeAccumArray #-}
-    unsafeAccumArray f init lu ies = runST (unsafeAccumArrayUArray f init lu ies)
+    unsafeAccumArray f initialValue lu ies = runST (unsafeAccumArrayUArray f initialValue lu ies)
 
 instance IArray UArray Double where
     {-# INLINE bounds #-}
@@ -701,7 +708,7 @@ instance IArray UArray Double where
     {-# INLINE unsafeAccum #-}
     unsafeAccum f arr ies = runST (unsafeAccumUArray f arr ies)
     {-# INLINE unsafeAccumArray #-}
-    unsafeAccumArray f init lu ies = runST (unsafeAccumArrayUArray f init lu ies)
+    unsafeAccumArray f initialValue lu ies = runST (unsafeAccumArrayUArray f initialValue lu ies)
 
 instance IArray UArray (StablePtr a) where
     {-# INLINE bounds #-}
@@ -722,9 +729,10 @@ instance IArray UArray (StablePtr a) where
     {-# INLINE unsafeAccum #-}
     unsafeAccum f arr ies = runST (unsafeAccumUArray f arr ies)
     {-# INLINE unsafeAccumArray #-}
-    unsafeAccumArray f init lu ies = runST (unsafeAccumArrayUArray f init lu ies)
+    unsafeAccumArray f initialValue lu ies = runST (unsafeAccumArrayUArray f initialValue lu ies)
 
 -- bogus StablePtr value for initialising a UArray of StablePtr.
+nullStablePtr :: StablePtr a
 #ifdef __GLASGOW_HASKELL__
 nullStablePtr = StablePtr (unsafeCoerce# 0#)
 #endif
@@ -751,7 +759,7 @@ instance IArray UArray Int8 where
     {-# INLINE unsafeAccum #-}
     unsafeAccum f arr ies = runST (unsafeAccumUArray f arr ies)
     {-# INLINE unsafeAccumArray #-}
-    unsafeAccumArray f init lu ies = runST (unsafeAccumArrayUArray f init lu ies)
+    unsafeAccumArray f initialValue lu ies = runST (unsafeAccumArrayUArray f initialValue lu ies)
 
 instance IArray UArray Int16 where
     {-# INLINE bounds #-}
@@ -772,7 +780,7 @@ instance IArray UArray Int16 where
     {-# INLINE unsafeAccum #-}
     unsafeAccum f arr ies = runST (unsafeAccumUArray f arr ies)
     {-# INLINE unsafeAccumArray #-}
-    unsafeAccumArray f init lu ies = runST (unsafeAccumArrayUArray f init lu ies)
+    unsafeAccumArray f initialValue lu ies = runST (unsafeAccumArrayUArray f initialValue lu ies)
 
 instance IArray UArray Int32 where
     {-# INLINE bounds #-}
@@ -793,7 +801,7 @@ instance IArray UArray Int32 where
     {-# INLINE unsafeAccum #-}
     unsafeAccum f arr ies = runST (unsafeAccumUArray f arr ies)
     {-# INLINE unsafeAccumArray #-}
-    unsafeAccumArray f init lu ies = runST (unsafeAccumArrayUArray f init lu ies)
+    unsafeAccumArray f initialValue lu ies = runST (unsafeAccumArrayUArray f initialValue lu ies)
 
 instance IArray UArray Int64 where
     {-# INLINE bounds #-}
@@ -814,7 +822,7 @@ instance IArray UArray Int64 where
     {-# INLINE unsafeAccum #-}
     unsafeAccum f arr ies = runST (unsafeAccumUArray f arr ies)
     {-# INLINE unsafeAccumArray #-}
-    unsafeAccumArray f init lu ies = runST (unsafeAccumArrayUArray f init lu ies)
+    unsafeAccumArray f initialValue lu ies = runST (unsafeAccumArrayUArray f initialValue lu ies)
 
 instance IArray UArray Word8 where
     {-# INLINE bounds #-}
@@ -835,7 +843,7 @@ instance IArray UArray Word8 where
     {-# INLINE unsafeAccum #-}
     unsafeAccum f arr ies = runST (unsafeAccumUArray f arr ies)
     {-# INLINE unsafeAccumArray #-}
-    unsafeAccumArray f init lu ies = runST (unsafeAccumArrayUArray f init lu ies)
+    unsafeAccumArray f initialValue lu ies = runST (unsafeAccumArrayUArray f initialValue lu ies)
 
 instance IArray UArray Word16 where
     {-# INLINE bounds #-}
@@ -856,7 +864,7 @@ instance IArray UArray Word16 where
     {-# INLINE unsafeAccum #-}
     unsafeAccum f arr ies = runST (unsafeAccumUArray f arr ies)
     {-# INLINE unsafeAccumArray #-}
-    unsafeAccumArray f init lu ies = runST (unsafeAccumArrayUArray f init lu ies)
+    unsafeAccumArray f initialValue lu ies = runST (unsafeAccumArrayUArray f initialValue lu ies)
 
 instance IArray UArray Word32 where
     {-# INLINE bounds #-}
@@ -877,7 +885,7 @@ instance IArray UArray Word32 where
     {-# INLINE unsafeAccum #-}
     unsafeAccum f arr ies = runST (unsafeAccumUArray f arr ies)
     {-# INLINE unsafeAccumArray #-}
-    unsafeAccumArray f init lu ies = runST (unsafeAccumArrayUArray f init lu ies)
+    unsafeAccumArray f initialValue lu ies = runST (unsafeAccumArrayUArray f initialValue lu ies)
 
 instance IArray UArray Word64 where
     {-# INLINE bounds #-}
@@ -898,7 +906,7 @@ instance IArray UArray Word64 where
     {-# INLINE unsafeAccum #-}
     unsafeAccum f arr ies = runST (unsafeAccumUArray f arr ies)
     {-# INLINE unsafeAccumArray #-}
-    unsafeAccumArray f init lu ies = runST (unsafeAccumArrayUArray f init lu ies)
+    unsafeAccumArray f initialValue lu ies = runST (unsafeAccumArrayUArray f initialValue lu ies)
 
 instance (Ix ix, Eq e, IArray UArray e) => Eq (UArray ix e) where
     (==) = eqUArray
@@ -955,10 +963,10 @@ class (Monad m) => MArray a e m where
 	-- The INLINE is crucial, because until we know at least which monad 	
 	-- we are in, the code below allocates like crazy.  So inline it,
 	-- in the hope that the context will know the monad.
-    newArray (l,u) init = do
+    newArray (l,u) initialValue = do
         let n = safeRangeSize (l,u)
         marr <- unsafeNewArray_ (l,u)
-        sequence_ [unsafeWrite marr i init | i <- [0 .. n - 1]]
+        sequence_ [unsafeWrite marr i initialValue | i <- [0 .. n - 1]]
         return marr
 
     {-# INLINE unsafeNewArray_ #-}
@@ -1017,7 +1025,7 @@ writeArray marr i e = do
 -- | Return a list of all the elements of a mutable array
 getElems :: (MArray a e m, Ix i) => a i e -> m [e]
 getElems marr = do 
-  (l,u) <- getBounds marr
+  (_l, _u) <- getBounds marr
   n <- getNumElements marr
   sequence [unsafeRead marr i | i <- [0 .. n - 1]]
 
@@ -1144,7 +1152,7 @@ instance MArray (STUArray s) Bool (ST s) where
     {-# INLINE getNumElements #-}
     getNumElements (STUArray _ _ n _) = return n
     {-# INLINE newArray #-}
-    newArray (l,u) init = ST $ \s1# ->
+    newArray (l,u) initialValue = ST $ \s1# ->
         case safeRangeSize (l,u)            of { n@(I# n#) ->
         case newByteArray# (bOOL_SCALE n#) s1# of { (# s2#, marr# #) ->
         case bOOL_WORD_SCALE n#         of { n'# ->
@@ -1155,11 +1163,11 @@ instance MArray (STUArray s) Bool (ST s) where
         case loop 0# s2#                of { s3# ->
         (# s3#, STUArray l u n marr# #) }}}}
       where
-        W# e# = if init then maxBound else 0
+        W# e# = if initialValue then maxBound else 0
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) bOOL_SCALE
     {-# INLINE newArray_ #-}
-    newArray_ bounds = newArray bounds False
+    newArray_ arrBounds = newArray arrBounds False
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readWordArray# marr# (bOOL_INDEX i#) s1# of { (# s2#, e# #) ->
@@ -1181,7 +1189,7 @@ instance MArray (STUArray s) Char (ST s) where
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (*# 4#)
     {-# INLINE newArray_ #-}
-    newArray_ bounds = newArray bounds (chr 0)
+    newArray_ arrBounds = newArray arrBounds (chr 0)
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readWideCharArray# marr# i# s1# of { (# s2#, e# #) ->
@@ -1199,7 +1207,7 @@ instance MArray (STUArray s) Int (ST s) where
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) wORD_SCALE
     {-# INLINE newArray_ #-}
-    newArray_ bounds = newArray bounds 0
+    newArray_ arrBounds = newArray arrBounds 0
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readIntArray# marr# i# s1# of { (# s2#, e# #) ->
@@ -1217,7 +1225,7 @@ instance MArray (STUArray s) Word (ST s) where
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) wORD_SCALE
     {-# INLINE newArray_ #-}
-    newArray_ bounds = newArray bounds 0
+    newArray_ arrBounds = newArray arrBounds 0
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readWordArray# marr# i# s1# of { (# s2#, e# #) ->
@@ -1235,7 +1243,7 @@ instance MArray (STUArray s) (Ptr a) (ST s) where
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) wORD_SCALE
     {-# INLINE newArray_ #-}
-    newArray_ bounds = newArray bounds nullPtr
+    newArray_ arrBounds = newArray arrBounds nullPtr
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readAddrArray# marr# i# s1# of { (# s2#, e# #) ->
@@ -1253,7 +1261,7 @@ instance MArray (STUArray s) (FunPtr a) (ST s) where
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) wORD_SCALE
     {-# INLINE newArray_ #-}
-    newArray_ bounds = newArray bounds nullFunPtr
+    newArray_ arrBounds = newArray arrBounds nullFunPtr
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readAddrArray# marr# i# s1# of { (# s2#, e# #) ->
@@ -1271,7 +1279,7 @@ instance MArray (STUArray s) Float (ST s) where
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) fLOAT_SCALE
     {-# INLINE newArray_ #-}
-    newArray_ bounds = newArray bounds 0
+    newArray_ arrBounds = newArray arrBounds 0
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readFloatArray# marr# i# s1# of { (# s2#, e# #) ->
@@ -1289,7 +1297,7 @@ instance MArray (STUArray s) Double (ST s) where
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) dOUBLE_SCALE
     {-# INLINE newArray_ #-}
-    newArray_ bounds = newArray bounds 0
+    newArray_ arrBounds = newArray arrBounds 0
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readDoubleArray# marr# i# s1# of { (# s2#, e# #) ->
@@ -1307,7 +1315,7 @@ instance MArray (STUArray s) (StablePtr a) (ST s) where
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) wORD_SCALE
     {-# INLINE newArray_ #-}
-    newArray_ bounds = newArray bounds (castPtrToStablePtr nullPtr)
+    newArray_ arrBounds = newArray arrBounds (castPtrToStablePtr nullPtr)
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readStablePtrArray# marr# i# s1# of { (# s2#, e# #) ->
@@ -1325,7 +1333,7 @@ instance MArray (STUArray s) Int8 (ST s) where
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (\x -> x)
     {-# INLINE newArray_ #-}
-    newArray_ bounds = newArray bounds 0
+    newArray_ arrBounds = newArray arrBounds 0
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readInt8Array# marr# i# s1# of { (# s2#, e# #) ->
@@ -1343,7 +1351,7 @@ instance MArray (STUArray s) Int16 (ST s) where
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (*# 2#)
     {-# INLINE newArray_ #-}
-    newArray_ bounds = newArray bounds 0
+    newArray_ arrBounds = newArray arrBounds 0
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readInt16Array# marr# i# s1# of { (# s2#, e# #) ->
@@ -1361,7 +1369,7 @@ instance MArray (STUArray s) Int32 (ST s) where
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (*# 4#)
     {-# INLINE newArray_ #-}
-    newArray_ bounds = newArray bounds 0
+    newArray_ arrBounds = newArray arrBounds 0
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readInt32Array# marr# i# s1# of { (# s2#, e# #) ->
@@ -1379,7 +1387,7 @@ instance MArray (STUArray s) Int64 (ST s) where
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (*# 8#)
     {-# INLINE newArray_ #-}
-    newArray_ bounds = newArray bounds 0
+    newArray_ arrBounds = newArray arrBounds 0
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# -> 
         case readInt64Array# marr# i# s1# of { (# s2#, e# #) ->
@@ -1397,7 +1405,7 @@ instance MArray (STUArray s) Word8 (ST s) where
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (\x -> x)
     {-# INLINE newArray_ #-}
-    newArray_ bounds = newArray bounds 0
+    newArray_ arrBounds = newArray arrBounds 0
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readWord8Array# marr# i# s1# of { (# s2#, e# #) ->
@@ -1415,7 +1423,7 @@ instance MArray (STUArray s) Word16 (ST s) where
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (*# 2#)
     {-# INLINE newArray_ #-}
-    newArray_ bounds = newArray bounds 0
+    newArray_ arrBounds = newArray arrBounds 0
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readWord16Array# marr# i# s1# of { (# s2#, e# #) ->
@@ -1433,7 +1441,7 @@ instance MArray (STUArray s) Word32 (ST s) where
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (*# 4#)
     {-# INLINE newArray_ #-}
-    newArray_ bounds = newArray bounds 0
+    newArray_ arrBounds = newArray arrBounds 0
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readWord32Array# marr# i# s1# of { (# s2#, e# #) ->
@@ -1451,7 +1459,7 @@ instance MArray (STUArray s) Word64 (ST s) where
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (*# 8#)
     {-# INLINE newArray_ #-}
-    newArray_ bounds = newArray bounds 0
+    newArray_ arrBounds = newArray arrBounds 0
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readWord64Array# marr# i# s1# of { (# s2#, e# #) ->

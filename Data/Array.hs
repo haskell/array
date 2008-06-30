@@ -60,7 +60,6 @@ import Data.Ix
 import GHC.Arr                    -- Most of the hard work is done here
 import Data.Generics.Basics    () -- To provide a Data instance
 import Data.Generics.Instances () -- To provide a Data instance
-import GHC.Err ( error )          -- Needed for Data instance
 #endif
 
 #ifdef __HUGS__

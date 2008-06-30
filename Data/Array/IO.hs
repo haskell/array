@@ -33,16 +33,17 @@ import Prelude
 
 import Data.Array.Base
 import Data.Array.IO.Internals
-import Data.Array		( Array )
+import Data.Array ( Array )
 import Data.Array.MArray
-import Data.Int
-import Data.Word
 
 #ifdef __GLASGOW_HASKELL__
 import Foreign
 import Foreign.C
 
-import GHC.Arr
+-- XXX This hiding of Array is just so GHC 6.9 doesn't think the
+-- Data.Array import is unused. *sigh*.
+import GHC.Arr hiding (Array)
+
 import GHC.IOBase
 import GHC.Handle
 #else
@@ -128,14 +129,14 @@ hGetArray
 		-- read, which might be smaller than the number requested
 		-- if the end of file was reached.
 
-hGetArray handle (IOUArray (STUArray l u n ptr)) count
+hGetArray handle (IOUArray (STUArray _l _u n ptr)) count
   | count == 0
   = return 0
   | count < 0 || count > n
   = illegalBufferSize handle "hGetArray" count
   | otherwise = do
       wantReadableHandle "hGetArray" handle $ 
-	\ handle_@Handle__{ haFD=fd, haBuffer=ref, haIsStream=is_stream } -> do
+	\ Handle__{ haFD=fd, haBuffer=ref, haIsStream=is_stream } -> do
 	buf@Buffer{ bufBuf=raw, bufWPtr=w, bufRPtr=r } <- readIORef ref
 	if bufferEmpty buf
 	   then readChunk fd is_stream ptr 0 count
@@ -158,7 +159,7 @@ hGetArray handle (IOUArray (STUArray l u n ptr)) count
 		   else return count
 
 readChunk :: FD -> Bool -> RawBuffer -> Int -> Int -> IO Int
-readChunk fd is_stream ptr init_off bytes = loop init_off bytes 
+readChunk fd is_stream ptr init_off bytes0 = loop init_off bytes0
  where
   loop :: Int -> Int -> IO Int
   loop off bytes | bytes <= 0 = return (off - init_off)
@@ -180,16 +181,16 @@ hPutArray
 	-> Int				-- ^ Number of 'Word8's to write
 	-> IO ()
 
-hPutArray handle (IOUArray (STUArray l u n raw)) count
+hPutArray handle (IOUArray (STUArray _l _u n raw)) count
   | count == 0
   = return ()
   | count < 0 || count > n
   = illegalBufferSize handle "hPutArray" count
   | otherwise
    = do wantWritableHandle "hPutArray" handle $ 
-          \ handle_@Handle__{ haFD=fd, haBuffer=ref, haIsStream=stream } -> do
+          \ Handle__{ haFD=fd, haBuffer=ref, haIsStream=stream } -> do
 
-          old_buf@Buffer{ bufBuf=old_raw, bufRPtr=r, bufWPtr=w, bufSize=size }
+          old_buf@Buffer{ bufBuf=old_raw, bufWPtr=w, bufSize=size }
 	    <- readIORef ref
 
           -- enough room in handle buffer?

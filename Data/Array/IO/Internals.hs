@@ -22,7 +22,6 @@ module Data.Array.IO.Internals (
 
 import Prelude
 
-import Data.Array.MArray
 import Data.Int
 import Data.Word
 import Data.Typeable
@@ -37,8 +36,8 @@ import Foreign.StablePtr	( StablePtr )
 import Data.Array.Base
 
 #ifdef __GLASGOW_HASKELL__
-import GHC.IOBase
-import GHC.Base
+import GHC.IOBase (IOArray(..),
+                   newIOArray, unsafeReadIOArray, unsafeWriteIOArray)
 #endif /* __GLASGOW_HASKELL__ */
 
 #include "Typeable.h"
@@ -86,8 +85,8 @@ instance MArray IOUArray Bool IO where
     {-# INLINE getNumElements #-}
     getNumElements (IOUArray arr) = stToIO $ getNumElements arr
     {-# INLINE newArray #-}
-    newArray lu init = stToIO $ do
-        marr <- newArray lu init; return (IOUArray marr)
+    newArray lu initialValue = stToIO $ do
+        marr <- newArray lu initialValue; return (IOUArray marr)
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ lu = stToIO $ do
         marr <- unsafeNewArray_ lu; return (IOUArray marr)
@@ -104,8 +103,8 @@ instance MArray IOUArray Char IO where
     {-# INLINE getNumElements #-}
     getNumElements (IOUArray arr) = stToIO $ getNumElements arr
     {-# INLINE newArray #-}
-    newArray lu init = stToIO $ do
-        marr <- newArray lu init; return (IOUArray marr)
+    newArray lu initialValue = stToIO $ do
+        marr <- newArray lu initialValue; return (IOUArray marr)
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ lu = stToIO $ do
         marr <- unsafeNewArray_ lu; return (IOUArray marr)
@@ -122,8 +121,8 @@ instance MArray IOUArray Int IO where
     {-# INLINE getNumElements #-}
     getNumElements (IOUArray arr) = stToIO $ getNumElements arr
     {-# INLINE newArray #-}
-    newArray lu init = stToIO $ do
-        marr <- newArray lu init; return (IOUArray marr)
+    newArray lu initialValue = stToIO $ do
+        marr <- newArray lu initialValue; return (IOUArray marr)
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ lu = stToIO $ do
         marr <- unsafeNewArray_ lu; return (IOUArray marr)
@@ -140,8 +139,8 @@ instance MArray IOUArray Word IO where
     {-# INLINE getNumElements #-}
     getNumElements (IOUArray arr) = stToIO $ getNumElements arr
     {-# INLINE newArray #-}
-    newArray lu init = stToIO $ do
-        marr <- newArray lu init; return (IOUArray marr)
+    newArray lu initialValue = stToIO $ do
+        marr <- newArray lu initialValue; return (IOUArray marr)
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ lu = stToIO $ do
         marr <- unsafeNewArray_ lu; return (IOUArray marr)
@@ -158,8 +157,8 @@ instance MArray IOUArray (Ptr a) IO where
     {-# INLINE getNumElements #-}
     getNumElements (IOUArray arr) = stToIO $ getNumElements arr
     {-# INLINE newArray #-}
-    newArray lu init = stToIO $ do
-        marr <- newArray lu init; return (IOUArray marr)
+    newArray lu initialValue = stToIO $ do
+        marr <- newArray lu initialValue; return (IOUArray marr)
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ lu = stToIO $ do
         marr <- unsafeNewArray_ lu; return (IOUArray marr)
@@ -176,8 +175,8 @@ instance MArray IOUArray (FunPtr a) IO where
     {-# INLINE getNumElements #-}
     getNumElements (IOUArray arr) = stToIO $ getNumElements arr
     {-# INLINE newArray #-}
-    newArray lu init = stToIO $ do
-        marr <- newArray lu init; return (IOUArray marr)
+    newArray lu initialValue = stToIO $ do
+        marr <- newArray lu initialValue; return (IOUArray marr)
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ lu = stToIO $ do
         marr <- unsafeNewArray_ lu; return (IOUArray marr)
@@ -194,8 +193,8 @@ instance MArray IOUArray Float IO where
     {-# INLINE getNumElements #-}
     getNumElements (IOUArray arr) = stToIO $ getNumElements arr
     {-# INLINE newArray #-}
-    newArray lu init = stToIO $ do
-        marr <- newArray lu init; return (IOUArray marr)
+    newArray lu initialValue = stToIO $ do
+        marr <- newArray lu initialValue; return (IOUArray marr)
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ lu = stToIO $ do
         marr <- unsafeNewArray_ lu; return (IOUArray marr)
@@ -212,8 +211,8 @@ instance MArray IOUArray Double IO where
     {-# INLINE getNumElements #-}
     getNumElements (IOUArray arr) = stToIO $ getNumElements arr
     {-# INLINE newArray #-}
-    newArray lu init = stToIO $ do
-        marr <- newArray lu init; return (IOUArray marr)
+    newArray lu initialValue = stToIO $ do
+        marr <- newArray lu initialValue; return (IOUArray marr)
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ lu = stToIO $ do
         marr <- unsafeNewArray_ lu; return (IOUArray marr)
@@ -230,8 +229,8 @@ instance MArray IOUArray (StablePtr a) IO where
     {-# INLINE getNumElements #-}
     getNumElements (IOUArray arr) = stToIO $ getNumElements arr
     {-# INLINE newArray #-}
-    newArray lu init = stToIO $ do
-        marr <- newArray lu init; return (IOUArray marr)
+    newArray lu initialValue = stToIO $ do
+        marr <- newArray lu initialValue; return (IOUArray marr)
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ lu = stToIO $ do
         marr <- unsafeNewArray_ lu; return (IOUArray marr)
@@ -248,8 +247,8 @@ instance MArray IOUArray Int8 IO where
     {-# INLINE getNumElements #-}
     getNumElements (IOUArray arr) = stToIO $ getNumElements arr
     {-# INLINE newArray #-}
-    newArray lu init = stToIO $ do
-        marr <- newArray lu init; return (IOUArray marr)
+    newArray lu initialValue = stToIO $ do
+        marr <- newArray lu initialValue; return (IOUArray marr)
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ lu = stToIO $ do
         marr <- unsafeNewArray_ lu; return (IOUArray marr)
@@ -266,8 +265,8 @@ instance MArray IOUArray Int16 IO where
     {-# INLINE getNumElements #-}
     getNumElements (IOUArray arr) = stToIO $ getNumElements arr
     {-# INLINE newArray #-}
-    newArray lu init = stToIO $ do
-        marr <- newArray lu init; return (IOUArray marr)
+    newArray lu initialValue = stToIO $ do
+        marr <- newArray lu initialValue; return (IOUArray marr)
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ lu = stToIO $ do
         marr <- unsafeNewArray_ lu; return (IOUArray marr)
@@ -284,8 +283,8 @@ instance MArray IOUArray Int32 IO where
     {-# INLINE getNumElements #-}
     getNumElements (IOUArray arr) = stToIO $ getNumElements arr
     {-# INLINE newArray #-}
-    newArray lu init = stToIO $ do
-        marr <- newArray lu init; return (IOUArray marr)
+    newArray lu initialValue = stToIO $ do
+        marr <- newArray lu initialValue; return (IOUArray marr)
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ lu = stToIO $ do
         marr <- unsafeNewArray_ lu; return (IOUArray marr)
@@ -302,8 +301,8 @@ instance MArray IOUArray Int64 IO where
     {-# INLINE getNumElements #-}
     getNumElements (IOUArray arr) = stToIO $ getNumElements arr
     {-# INLINE newArray #-}
-    newArray lu init = stToIO $ do
-        marr <- newArray lu init; return (IOUArray marr)
+    newArray lu initialValue = stToIO $ do
+        marr <- newArray lu initialValue; return (IOUArray marr)
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ lu = stToIO $ do
         marr <- unsafeNewArray_ lu; return (IOUArray marr)
@@ -320,8 +319,8 @@ instance MArray IOUArray Word8 IO where
     {-# INLINE getNumElements #-}
     getNumElements (IOUArray arr) = stToIO $ getNumElements arr
     {-# INLINE newArray #-}
-    newArray lu init = stToIO $ do
-        marr <- newArray lu init; return (IOUArray marr)
+    newArray lu initialValue = stToIO $ do
+        marr <- newArray lu initialValue; return (IOUArray marr)
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ lu = stToIO $ do
         marr <- unsafeNewArray_ lu; return (IOUArray marr)
@@ -338,8 +337,8 @@ instance MArray IOUArray Word16 IO where
     {-# INLINE getNumElements #-}
     getNumElements (IOUArray arr) = stToIO $ getNumElements arr
     {-# INLINE newArray #-}
-    newArray lu init = stToIO $ do
-        marr <- newArray lu init; return (IOUArray marr)
+    newArray lu initialValue = stToIO $ do
+        marr <- newArray lu initialValue; return (IOUArray marr)
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ lu = stToIO $ do
         marr <- unsafeNewArray_ lu; return (IOUArray marr)
@@ -356,8 +355,8 @@ instance MArray IOUArray Word32 IO where
     {-# INLINE getNumElements #-}
     getNumElements (IOUArray arr) = stToIO $ getNumElements arr
     {-# INLINE newArray #-}
-    newArray lu init = stToIO $ do
-        marr <- newArray lu init; return (IOUArray marr)
+    newArray lu initialValue = stToIO $ do
+        marr <- newArray lu initialValue; return (IOUArray marr)
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ lu = stToIO $ do
         marr <- unsafeNewArray_ lu; return (IOUArray marr)
@@ -374,8 +373,8 @@ instance MArray IOUArray Word64 IO where
     {-# INLINE getNumElements #-}
     getNumElements (IOUArray arr) = stToIO $ getNumElements arr
     {-# INLINE newArray #-}
-    newArray lu init = stToIO $ do
-        marr <- newArray lu init; return (IOUArray marr)
+    newArray lu initialValue = stToIO $ do
+        marr <- newArray lu initialValue; return (IOUArray marr)
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ lu = stToIO $ do
         marr <- unsafeNewArray_ lu; return (IOUArray marr)
