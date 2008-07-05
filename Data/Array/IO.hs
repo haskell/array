@@ -48,6 +48,7 @@ import GHC.IOBase
 import GHC.Handle
 #else
 import Data.Char
+import Data.Word ( Word8 )
 import System.IO
 import System.IO.Error
 #endif
