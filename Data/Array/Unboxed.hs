@@ -20,7 +20,5 @@ module Data.Array.Unboxed (
    module Data.Array.IArray,
  ) where
 
-import Prelude
-
 import Data.Array.IArray
 import Data.Array.Base

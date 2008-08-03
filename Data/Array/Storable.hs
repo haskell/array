@@ -40,8 +40,6 @@ module Data.Array.Storable (
     )
     where
 
-import Prelude
-
 import Data.Array.Base
 import Data.Array.MArray
 import Foreign hiding (newArray)

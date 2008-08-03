@@ -25,8 +25,6 @@
 -- #hide
 module Data.Array.Base where
 
-import Prelude
-
 import Control.Monad.ST.Lazy ( strictToLazyST )
 import qualified Control.Monad.ST.Lazy as Lazy (ST)
 import Data.Ix ( Ix, range, index, rangeSize )

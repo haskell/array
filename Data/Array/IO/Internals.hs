@@ -20,8 +20,6 @@ module Data.Array.IO.Internals (
    castIOUArray,	-- :: IOUArray ix a -> IO (IOUArray ix b)
  ) where
 
-import Prelude
-
 import Data.Int
 import Data.Word
 import Data.Typeable

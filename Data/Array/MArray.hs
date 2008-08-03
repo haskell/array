@@ -46,8 +46,6 @@ module Data.Array.MArray (
     unsafeThaw,   -- :: (Ix i, IArray a e, MArray b e m) => a i e -> m (b i e)
   ) where
 
-import Prelude
-
 import Data.Ix
 #ifdef __HADDOCK__
 import Data.Array.IArray

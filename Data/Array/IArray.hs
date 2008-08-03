@@ -44,8 +44,6 @@ module Data.Array.IArray (
     ixmap,      -- :: (IArray a e, Ix i, Ix j) => (i,i) -> (i -> j) -> a j e -> a i e
  )  where
 
-import Prelude
-
 import Data.Ix
 import Data.Array (Array)
 import Data.Array.Base

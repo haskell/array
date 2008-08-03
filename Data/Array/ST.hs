@@ -27,8 +27,6 @@ module Data.Array.ST (
    module Data.Array.MArray,
  ) where
 
-import Prelude
-
 import Data.Array.MArray
 import Data.Array.Base	( STUArray, castSTUArray, UArray, unsafeFreezeSTUArray )
 import Control.Monad.ST	( ST, runST )

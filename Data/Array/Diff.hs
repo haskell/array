@@ -73,8 +73,6 @@ module Data.Array.Diff (
 ------------------------------------------------------------------------
 -- Imports.
 
-import Prelude
-
 import Data.Array.Base
 import Data.Array.IArray
 import Data.Array.IO

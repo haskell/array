@@ -29,8 +29,6 @@ module Data.Array.IO (
    hPutArray,		-- :: Handle -> IOUArray Int Word8 -> Int -> IO ()
  ) where
 
-import Prelude
-
 import Data.Array.Base
 import Data.Array.IO.Internals
 import Data.Array ( Array )
