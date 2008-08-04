@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -fno-warn-orphans #-}	    -- Temporary, I hope.  SLPJ Aug08
+
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Array 

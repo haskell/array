@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -#include "HsBase.h" #-}
+{-# OPTIONS_GHC -fno-warn-orphans #-}	    -- Temporary, I hope.  SLPJ Aug08
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Array.IO
