@@ -22,12 +22,11 @@ library
       Data.Array.Diff
       Data.Array.IArray
       Data.Array.IO
+      Data.Array.IO.Internals
       Data.Array.MArray
       Data.Array.ST
       Data.Array.Storable
       Data.Array.Unboxed
-    other-modules:
-      Data.Array.IO.Internals
     extensions:
       MultiParamTypeClasses,
       FlexibleContexts,
