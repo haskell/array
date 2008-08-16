@@ -1114,10 +1114,10 @@ INSTANCE_TYPEABLE3(STArray,sTArrayTc,"STArray")
 -- don\'t use 'STUArray' if you require the non-strictness that
 -- 'STArray' provides.
 #ifdef __GLASGOW_HASKELL__
-data STUArray s i a = STUArray !i !i !Int (MutableByteArray# s)
+data STUArray s i e = STUArray !i !i !Int (MutableByteArray# s)
 #endif
 #ifdef __HUGS__
-data STUArray s i a = STUArray !i !i !Int !(MutableByteArray s)
+data STUArray s i e = STUArray !i !i !Int !(MutableByteArray s)
 #endif
 
 INSTANCE_TYPEABLE3(STUArray,stUArrayTc,"STUArray")
