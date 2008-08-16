@@ -1,5 +1,4 @@
 {-# OPTIONS_GHC -#include "HsBase.h" #-}
-{-# OPTIONS_GHC -fno-warn-orphans #-}	    -- Temporary, I hope.  SLPJ Aug08
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Array.IO.Internal
@@ -19,6 +18,9 @@ module Data.Array.IO.Internals (
    IOArray(..),		-- instance of: Eq, Typeable
    IOUArray(..),	-- instance of: Eq, Typeable
    castIOUArray,	-- :: IOUArray ix a -> IO (IOUArray ix b)
+#ifdef __GLASGOW_HASKELL__
+   unsafeThawIOUArray,
+#endif
  ) where
 
 import Data.Int
@@ -33,32 +35,13 @@ import Control.Monad.ST		( RealWorld, stToIO )
 import Foreign.Ptr		( Ptr, FunPtr )
 import Foreign.StablePtr	( StablePtr )
 import Data.Array.Base
+import Data.Ix
 
 #ifdef __GLASGOW_HASKELL__
-import GHC.IOBase (IOArray(..),
-                   newIOArray, unsafeReadIOArray, unsafeWriteIOArray)
+import GHC.IOBase (IOArray(..))
 #endif /* __GLASGOW_HASKELL__ */
 
 #include "Typeable.h"
-
-INSTANCE_TYPEABLE2(IOArray,iOArrayTc,"IOArray")
-
------------------------------------------------------------------------------
--- | Instance declarations for 'IOArray's
-
-instance MArray IOArray e IO where
-#if defined(__HUGS__)
-    getBounds   = return . boundsIOArray
-    getNumElements = return . getNumElementsIOArray
-#elif defined(__GLASGOW_HASKELL__)
-    {-# INLINE getBounds #-}
-    getBounds (IOArray marr) = stToIO $ getBounds marr
-    {-# INLINE getNumElements #-}
-    getNumElements (IOArray marr) = stToIO $ getNumElements marr
-#endif
-    newArray    = newIOArray
-    unsafeRead  = unsafeReadIOArray
-    unsafeWrite = unsafeWriteIOArray
 
 -----------------------------------------------------------------------------
 -- Flat unboxed mutable arrays (IO monad)
@@ -391,4 +374,38 @@ castIOUArray :: IOUArray ix a -> IO (IOUArray ix b)
 castIOUArray (IOUArray marr) = stToIO $ do
     marr' <- castSTUArray marr
     return (IOUArray marr')
+
+{-# INLINE unsafeThawIOUArray #-}
+unsafeThawIOUArray :: Ix ix => UArray ix e -> IO (IOUArray ix e)
+unsafeThawIOUArray arr = stToIO $ do
+    marr <- unsafeThawSTUArray arr
+    return (IOUArray marr)
+
+{-# RULES
+"unsafeThaw/IOUArray" unsafeThaw = unsafeThawIOUArray
+    #-}
+
+thawIOUArray :: Ix ix => UArray ix e -> IO (IOUArray ix e)
+thawIOUArray arr = stToIO $ do
+    marr <- thawSTUArray arr
+    return (IOUArray marr)
+
+{-# RULES
+"thaw/IOUArray" thaw = thawIOUArray
+    #-}
+
+{-# INLINE unsafeFreezeIOUArray #-}
+unsafeFreezeIOUArray :: Ix ix => IOUArray ix e -> IO (UArray ix e)
+unsafeFreezeIOUArray (IOUArray marr) = stToIO (unsafeFreezeSTUArray marr)
+
+{-# RULES
+"unsafeFreeze/IOUArray" unsafeFreeze = unsafeFreezeIOUArray
+    #-}
+
+freezeIOUArray :: Ix ix => IOUArray ix e -> IO (UArray ix e)
+freezeIOUArray (IOUArray marr) = stToIO (freezeSTUArray marr)
+
+{-# RULES
+"freeze/IOUArray" freeze = freezeIOUArray
+    #-}
 

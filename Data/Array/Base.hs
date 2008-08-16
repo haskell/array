@@ -43,7 +43,8 @@ import GHC.Float	( Float(..), Double(..) )
 import GHC.Stable	( StablePtr(..) )
 import GHC.Int		( Int8(..),  Int16(..),  Int32(..),  Int64(..) )
 import GHC.Word		( Word8(..), Word16(..), Word32(..), Word64(..) )
-import GHC.IOBase       ( IO(..) )
+import GHC.IOBase       ( IO(..), IOArray(..), stToIO,
+                          newIOArray, unsafeReadIOArray, unsafeWriteIOArray )
 #else
 import Data.Int
 import Data.Word
@@ -56,6 +57,7 @@ import Foreign.Storable
 import qualified Hugs.Array as Arr
 import qualified Hugs.ST as ArrST
 import Hugs.Array ( unsafeIndex )
+import Hugs.IOArray
 import Hugs.ST ( STArray, ST(..), runST )
 import Hugs.ByteArray
 #endif
@@ -988,6 +990,20 @@ class (Monad m) => MArray a e m where
     -- default initialisation with undefined values if we *do* know the
     -- initial value and it is constant for all elements.
 
+instance MArray IOArray e IO where
+#if defined(__HUGS__)
+    getBounds   = return . boundsIOArray
+    getNumElements = return . getNumElementsIOArray
+#elif defined(__GLASGOW_HASKELL__)
+    {-# INLINE getBounds #-}
+    getBounds (IOArray marr) = stToIO $ getBounds marr
+    {-# INLINE getNumElements #-}
+    getNumElements (IOArray marr) = stToIO $ getNumElements marr
+#endif
+    newArray    = newIOArray
+    unsafeRead  = unsafeReadIOArray
+    unsafeWrite = unsafeWriteIOArray
+
 {-# INLINE newListArray #-}
 -- | Constructs a mutable array from a list of initial elements.
 -- The list gives the elements of the array in ascending order
@@ -1845,6 +1861,40 @@ unsafeThawSTUArray (UArray l u n marr#) =
 {-# RULES
 "unsafeThaw/STArray"    unsafeThaw = ArrST.unsafeThawSTArray
 "unsafeThaw/STUArray"   unsafeThaw = unsafeThawSTUArray
+    #-}
+
+{-# INLINE unsafeThawIOArray #-}
+unsafeThawIOArray :: Ix ix => Arr.Array ix e -> IO (IOArray ix e)
+unsafeThawIOArray arr = stToIO $ do
+    marr <- ArrST.unsafeThawSTArray arr
+    return (IOArray marr)
+
+{-# RULES
+"unsafeThaw/IOArray"  unsafeThaw = unsafeThawIOArray
+    #-}
+
+thawIOArray :: Ix ix => Arr.Array ix e -> IO (IOArray ix e)
+thawIOArray arr = stToIO $ do
+    marr <- ArrST.thawSTArray arr
+    return (IOArray marr)
+
+{-# RULES
+"thaw/IOArray"  thaw = thawIOArray
+    #-}
+
+freezeIOArray :: Ix ix => IOArray ix e -> IO (Arr.Array ix e)
+freezeIOArray (IOArray marr) = stToIO (ArrST.freezeSTArray marr)
+
+{-# RULES
+"freeze/IOArray"  freeze = freezeIOArray
+    #-}
+
+{-# INLINE unsafeFreezeIOArray #-}
+unsafeFreezeIOArray :: Ix ix => IOArray ix e -> IO (Arr.Array ix e)
+unsafeFreezeIOArray (IOArray marr) = stToIO (ArrST.unsafeFreezeSTArray marr)
+
+{-# RULES
+"unsafeFreeze/IOArray"  unsafeFreeze = unsafeFreezeIOArray
     #-}
 #endif /* __GLASGOW_HASKELL__ */
 

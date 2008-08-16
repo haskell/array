@@ -1,5 +1,4 @@
 {-# OPTIONS_GHC -#include "HsBase.h" #-}
-{-# OPTIONS_GHC -fno-warn-orphans #-}	    -- Temporary, I hope.  SLPJ Aug08
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Array.IO
@@ -32,16 +31,13 @@ module Data.Array.IO (
 
 import Data.Array.Base
 import Data.Array.IO.Internals
-import Data.Array ( Array )
 import Data.Array.MArray
 
 #ifdef __GLASGOW_HASKELL__
 import Foreign
 import Foreign.C
 
--- XXX This hiding of Array is just so GHC 6.9 doesn't think the
--- Data.Array import is unused. *sigh*.
-import GHC.Arr hiding (Array)
+import GHC.Arr
 
 import GHC.IOBase
 import GHC.Handle
@@ -53,68 +49,6 @@ import System.IO.Error
 #endif
 
 #ifdef __GLASGOW_HASKELL__
------------------------------------------------------------------------------
--- Freezing
-
-freezeIOArray :: Ix ix => IOArray ix e -> IO (Array ix e)
-freezeIOArray (IOArray marr) = stToIO (freezeSTArray marr)
-
-freezeIOUArray :: Ix ix => IOUArray ix e -> IO (UArray ix e)
-freezeIOUArray (IOUArray marr) = stToIO (freezeSTUArray marr)
-
-{-# RULES
-"freeze/IOArray"  freeze = freezeIOArray
-"freeze/IOUArray" freeze = freezeIOUArray
-    #-}
-
-{-# INLINE unsafeFreezeIOArray #-}
-unsafeFreezeIOArray :: Ix ix => IOArray ix e -> IO (Array ix e)
-unsafeFreezeIOArray (IOArray marr) = stToIO (unsafeFreezeSTArray marr)
-
-{-# INLINE unsafeFreezeIOUArray #-}
-unsafeFreezeIOUArray :: Ix ix => IOUArray ix e -> IO (UArray ix e)
-unsafeFreezeIOUArray (IOUArray marr) = stToIO (unsafeFreezeSTUArray marr)
-
-{-# RULES
-"unsafeFreeze/IOArray"  unsafeFreeze = unsafeFreezeIOArray
-"unsafeFreeze/IOUArray" unsafeFreeze = unsafeFreezeIOUArray
-    #-}
-
------------------------------------------------------------------------------
--- Thawing
-
-thawIOArray :: Ix ix => Array ix e -> IO (IOArray ix e)
-thawIOArray arr = stToIO $ do
-    marr <- thawSTArray arr
-    return (IOArray marr)
-
-thawIOUArray :: Ix ix => UArray ix e -> IO (IOUArray ix e)
-thawIOUArray arr = stToIO $ do
-    marr <- thawSTUArray arr
-    return (IOUArray marr)
-
-{-# RULES
-"thaw/IOArray"  thaw = thawIOArray
-"thaw/IOUArray" thaw = thawIOUArray
-    #-}
-
-{-# INLINE unsafeThawIOArray #-}
-unsafeThawIOArray :: Ix ix => Array ix e -> IO (IOArray ix e)
-unsafeThawIOArray arr = stToIO $ do
-    marr <- unsafeThawSTArray arr
-    return (IOArray marr)
-
-{-# INLINE unsafeThawIOUArray #-}
-unsafeThawIOUArray :: Ix ix => UArray ix e -> IO (IOUArray ix e)
-unsafeThawIOUArray arr = stToIO $ do
-    marr <- unsafeThawSTUArray arr
-    return (IOUArray marr)
-
-{-# RULES
-"unsafeThaw/IOArray"  unsafeThaw = unsafeThawIOArray
-"unsafeThaw/IOUArray" unsafeThaw = unsafeThawIOUArray
-    #-}
-
 -- ---------------------------------------------------------------------------
 -- hGetArray
 

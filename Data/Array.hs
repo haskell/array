@@ -1,4 +1,3 @@
-{-# OPTIONS_GHC -fno-warn-orphans #-}	    -- Temporary, I hope.  SLPJ Aug08
 
 -----------------------------------------------------------------------------
 -- |
@@ -69,12 +68,13 @@ import Hugs.Array
 #endif
 
 #ifdef __NHC__
-import Array		-- Haskell'98 arrays
-#else
+import Array -- Haskell'98 arrays
+#endif
 
-import Data.Foldable    ( Foldable(foldr) )
-import Data.Typeable    ()                        -- For the Typeable instance
-import Data.Traversable ( Traversable(traverse) )
+-- For instances:
+import Data.Foldable    ()
+import Data.Typeable    ()
+import Data.Traversable ()
 
 {- $intro
 Haskell provides indexable /arrays/, which may be thought of as functions
@@ -89,10 +89,3 @@ from "Data.Array" so that modules need not import both "Data.Array" and
 "Data.Ix".
 -}
 
-instance Ix i => Foldable (Array i) where
-    foldr f z = Prelude.foldr f z . elems
-
-instance Ix i => Traversable (Array i) where
-    traverse f arr = listArray (bounds arr) `fmap` traverse f (elems arr)
-
-#endif
