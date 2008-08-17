@@ -11,7 +11,7 @@
 --
 -- Basic non-strict arrays.
 --
--- /Note:/ The "Data.Array.IArray" module provides more general interface
+-- /Note:/ The "Data.Array.IArray" module provides a more general interface
 -- to immutable arrays: it defines operations with the same names as
 -- those defined below, but with more general types, and also defines
 -- 'Array' instances of the relevant classes.  To use that more general
@@ -59,8 +59,8 @@ import Data.Ix
 
 #ifdef __GLASGOW_HASKELL__
 import GHC.Arr                    -- Most of the hard work is done here
-import Data.Generics.Basics    () -- To provide a Data instance
 import Data.Generics.Instances () -- To provide a Data instance
+import Data.Generics.Basics    () -- because the Data instance is an orphan
 #endif
 
 #ifdef __HUGS__
@@ -72,9 +72,7 @@ import Array -- Haskell'98 arrays
 #endif
 
 -- For instances:
-import Data.Foldable    ()
 import Data.Typeable    ()
-import Data.Traversable ()
 
 {- $intro
 Haskell provides indexable /arrays/, which may be thought of as functions
