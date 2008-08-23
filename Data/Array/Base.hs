@@ -444,16 +444,13 @@ unsafeArrayUArray (l,u) ies default_elem = do
     sequence_ [unsafeWrite marr i e | (i, e) <- ies]
     unsafeFreezeSTUArray marr
 
-#ifdef __GLASGOW_HASKELL__
 {-# INLINE unsafeFreezeSTUArray #-}
 unsafeFreezeSTUArray :: STUArray s i e -> ST s (UArray i e)
+#if __GLASGOW_HASKELL__
 unsafeFreezeSTUArray (STUArray l u n marr#) = ST $ \s1# ->
     case unsafeFreezeByteArray# marr# s1# of { (# s2#, arr# #) ->
     (# s2#, UArray l u n arr# #) }
-#endif
-
-#ifdef __HUGS__
-unsafeFreezeSTUArray :: STUArray s i e -> ST s (UArray i e)
+#elif __HUGS__
 unsafeFreezeSTUArray (STUArray l u n marr) = do
     arr <- unsafeFreezeMutableByteArray marr
     return (UArray l u n arr)
@@ -1784,8 +1781,8 @@ thaw arr = case bounds arr of
               | i <- [0 .. n - 1]]
     return marr
 
-#ifdef __GLASGOW_HASKELL__
 thawSTUArray :: Ix i => UArray i e -> ST s (STUArray s i e)
+#if __GLASGOW_HASKELL__
 thawSTUArray (UArray l u n arr#) = ST $ \s1# ->
     case sizeofByteArray# arr#          of { n# ->
     case newByteArray# n# s1#           of { (# s2#, marr# #) ->
@@ -1801,10 +1798,7 @@ foreign import ccall unsafe "memcpy"
 "thaw/STArray"  thaw = ArrST.thawSTArray
 "thaw/STUArray" thaw = thawSTUArray
     #-}
-#endif /* __GLASGOW_HASKELL__ */
-
-#ifdef __HUGS__
-thawSTUArray :: Ix i => UArray i e -> ST s (STUArray s i e)
+#elif __HUGS__
 thawSTUArray (UArray l u n arr) = do
     marr <- thawByteArray arr
     return (STUArray l u n marr)
@@ -1902,12 +1896,9 @@ unsafeFreezeIOArray (IOArray marr) = stToIO (ArrST.unsafeFreezeSTArray marr)
 -- different element type.  All the elements of the resulting array
 -- are undefined (unless you know what you\'re doing...).
 
-#ifdef __GLASGOW_HASKELL__
 castSTUArray :: STUArray s ix a -> ST s (STUArray s ix b)
+#if __GLASGOW_HASKELL__
 castSTUArray (STUArray l u n marr#) = return (STUArray l u n marr#)
-#endif
-
-#ifdef __HUGS__
-castSTUArray :: STUArray s ix a -> ST s (STUArray s ix b)
+#elif __HUGS__
 castSTUArray (STUArray l u n marr) = return (STUArray l u n marr)
 #endif
