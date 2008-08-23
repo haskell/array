@@ -375,6 +375,7 @@ castIOUArray (IOUArray marr) = stToIO $ do
     marr' <- castSTUArray marr
     return (IOUArray marr')
 
+#ifdef __GLASGOW_HASKELL__
 {-# INLINE unsafeThawIOUArray #-}
 unsafeThawIOUArray :: Ix ix => UArray ix e -> IO (IOUArray ix e)
 unsafeThawIOUArray arr = stToIO $ do
@@ -408,4 +409,4 @@ freezeIOUArray (IOUArray marr) = stToIO (freezeSTUArray marr)
 {-# RULES
 "freeze/IOUArray" freeze = freezeIOUArray
     #-}
-
+#endif /* __GLASGOW_HASKELL__ */
