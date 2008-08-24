@@ -4,6 +4,7 @@ license:    BSD3
 license-file:    LICENSE
 maintainer:    libraries@haskell.org
 synopsis:   Mutable and immutable arrays
+category:   Data Structures
 description:
     This package defines the classes @IArray@ of immutable arrays and
     @MArray@ of arrays mutable within appropriate monads, as well as
