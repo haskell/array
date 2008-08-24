@@ -12,7 +12,7 @@ cabal-version: >=1.2
 build-type: Simple
 
 library
-  build-depends: base, st
+  build-depends: base, st, concurrent
   exposed-modules:
       Data.Array
   extensions: CPP
