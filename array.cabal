@@ -13,7 +13,9 @@ cabal-version: >=1.2
 build-type: Simple
 
 library
-  build-depends: base, st, concurrent, syb
+  build-depends: base
+  if !impl(nhc98)
+    build-depends: st, concurrent, syb
   exposed-modules:
       Data.Array
   extensions: CPP
