@@ -11,6 +11,7 @@ description:
     some instances of these classes.
 cabal-version: >=1.2
 build-type: Simple
+extra-source-files: include/Typeable.h
 
 library
   build-depends: base
