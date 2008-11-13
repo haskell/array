@@ -15,8 +15,6 @@ extra-source-files: include/Typeable.h
 
 library
   build-depends: base
-  if !impl(nhc98)
-    build-depends: syb
   exposed-modules:
       Data.Array
   extensions: CPP

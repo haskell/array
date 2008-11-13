@@ -59,8 +59,6 @@ import Data.Ix
 
 #ifdef __GLASGOW_HASKELL__
 import GHC.Arr                    -- Most of the hard work is done here
---import Data.Generics.Instances () -- To provide a Data instance
---import Data.Generics.Basics    () -- because the Data instance is an orphan
 #endif
 
 #ifdef __HUGS__
