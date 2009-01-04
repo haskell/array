@@ -32,6 +32,7 @@ module Data.Array.IO (
 import Data.Array.Base
 import Data.Array.IO.Internals
 import Data.Array.MArray
+import System.IO.Error
 
 #ifdef __GLASGOW_HASKELL__
 import Foreign
@@ -45,7 +46,6 @@ import GHC.Handle
 import Data.Char
 import Data.Word ( Word8 )
 import System.IO
-import System.IO.Error
 #endif
 
 #ifdef __GLASGOW_HASKELL__
@@ -154,10 +154,9 @@ foreign import ccall unsafe "__hscore_memcpy_src_off"
 
 illegalBufferSize :: Handle -> String -> Int -> IO a
 illegalBufferSize handle fn sz = 
-	ioException (IOError (Just handle)
-			    InvalidArgument  fn
-			    ("illegal buffer size " ++ showsPrec 9 (sz::Int) [])
-			    Nothing)
+	ioException (ioeSetErrorString
+		     (mkIOError InvalidArgument fn (Just handle) Nothing)
+		     ("illegal buffer size " ++ showsPrec 9 (sz::Int) []))
 
 #else /* !__GLASGOW_HASKELL__ */
 hGetArray :: Handle -> IOUArray Int Word8 -> Int -> IO Int
