@@ -3,6 +3,7 @@ version:    0.2.0.1
 license:    BSD3
 license-file:    LICENSE
 maintainer:    libraries@haskell.org
+bug-reports: http://hackage.haskell.org/trac/ghc/newticket?component=libraries%20%28other%29
 synopsis:   Mutable and immutable arrays
 category:   Data Structures
 description:
@@ -12,6 +13,10 @@ description:
 cabal-version: >=1.2
 build-type: Simple
 extra-source-files: include/Typeable.h
+
+source-repository head
+    type:     darcs
+    location: http://darcs.haskell.org/packages/array/
 
 library
   build-depends: base
