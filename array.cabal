@@ -10,7 +10,7 @@ description:
     This package defines the classes @IArray@ of immutable arrays and
     @MArray@ of arrays mutable within appropriate monads, as well as
     some instances of these classes.
-cabal-version: >=1.2
+cabal-version: >=1.6
 build-type: Simple
 extra-source-files: include/Typeable.h
 
