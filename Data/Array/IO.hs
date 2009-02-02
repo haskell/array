@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -#include "HsBase.h" #-}
+{-# OPTIONS_GHC -w #-} --tmp
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Array.IO
@@ -39,9 +40,11 @@ import Foreign
 import Foreign.C
 
 import GHC.Arr
+import GHC.IORef
+import GHC.IO.Handle
+import GHC.IO.Buffer
+import GHC.IO.Exception
 
-import GHC.IOBase
-import GHC.Handle
 #else
 import Data.Char
 import Data.Word ( Word8 )
@@ -62,6 +65,10 @@ hGetArray
 		-- ^ Returns: the number of 'Word8's actually 
 		-- read, which might be smaller than the number requested
 		-- if the end of file was reached.
+
+hGetArray = undefined
+
+#if 0
 
 hGetArray handle (IOUArray (STUArray _l _u n ptr)) count
   | count == 0
@@ -105,6 +112,8 @@ readChunk fd is_stream ptr init_off bytes0 = loop init_off bytes0
 	then return (off - init_off)
 	else loop (off + r) (bytes - r)
 
+#endif
+
 -- ---------------------------------------------------------------------------
 -- hPutArray
 
@@ -114,6 +123,10 @@ hPutArray
 	-> IOUArray Int Word8		-- ^ Array to write from
 	-> Int				-- ^ Number of 'Word8's to write
 	-> IO ()
+
+hPutArray = undefined
+
+#if 0
 
 hPutArray handle (IOUArray (STUArray _l _u n raw)) count
   | count == 0
@@ -144,13 +157,10 @@ hPutArray handle (IOUArray (STUArray _l _u n raw)) count
 		    flushWriteBuffer fd stream this_buf
 		    return ()
 
+#endif
+
 -- ---------------------------------------------------------------------------
 -- Internal Utils
-
-foreign import ccall unsafe "__hscore_memcpy_dst_off"
-   memcpy_baoff_ba :: RawBuffer -> CInt -> RawBuffer -> CSize -> IO (Ptr ())
-foreign import ccall unsafe "__hscore_memcpy_src_off"
-   memcpy_ba_baoff :: RawBuffer -> RawBuffer -> CInt -> CSize -> IO (Ptr ())
 
 illegalBufferSize :: Handle -> String -> Int -> IO a
 illegalBufferSize handle fn sz = 

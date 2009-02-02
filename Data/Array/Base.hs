@@ -43,8 +43,14 @@ import GHC.Float	( Float(..), Double(..) )
 import GHC.Stable	( StablePtr(..) )
 import GHC.Int		( Int8(..),  Int16(..),  Int32(..),  Int64(..) )
 import GHC.Word		( Word8(..), Word16(..), Word32(..), Word64(..) )
+#if __GLASGOW_HASKELL__ >= 611
+import GHC.IO           ( IO(..), stToIO )
+import GHC.IOArray      ( IOArray(..),
+                          newIOArray, unsafeReadIOArray, unsafeWriteIOArray )
+#else
 import GHC.IOBase       ( IO(..), IOArray(..), stToIO,
                           newIOArray, unsafeReadIOArray, unsafeWriteIOArray )
+#endif
 #else
 import Data.Int
 import Data.Word
