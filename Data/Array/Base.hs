@@ -1174,7 +1174,7 @@ instance MArray (STUArray s) Bool (ST s) where
         case loop 0# s2#                of { s3# ->
         (# s3#, STUArray l u n marr# #) }}}}
       where
-        W# e# = if initialValue then maxBound else 0
+        !(W# e#) = if initialValue then maxBound else 0
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) bOOL_SCALE
     {-# INLINE newArray_ #-}
@@ -1486,12 +1486,12 @@ instance MArray (STUArray s) Word64 (ST s) where
 bOOL_SCALE, bOOL_WORD_SCALE,
   wORD_SCALE, dOUBLE_SCALE, fLOAT_SCALE :: Int# -> Int#
 bOOL_SCALE n# = (n# +# last#) `uncheckedIShiftRA#` 3#
-  where I# last# = SIZEOF_HSWORD * 8 - 1
+  where !(I# last#) = SIZEOF_HSWORD * 8 - 1
 bOOL_WORD_SCALE n# = bOOL_INDEX (n# +# last#)
-  where I# last# = SIZEOF_HSWORD * 8 - 1
-wORD_SCALE   n# = scale# *# n# where I# scale# = SIZEOF_HSWORD
-dOUBLE_SCALE n# = scale# *# n# where I# scale# = SIZEOF_HSDOUBLE
-fLOAT_SCALE  n# = scale# *# n# where I# scale# = SIZEOF_HSFLOAT
+  where !(I# last#) = SIZEOF_HSWORD * 8 - 1
+wORD_SCALE   n# = scale# *# n# where !(I# scale#) = SIZEOF_HSWORD
+dOUBLE_SCALE n# = scale# *# n# where !(I# scale#) = SIZEOF_HSDOUBLE
+fLOAT_SCALE  n# = scale# *# n# where !(I# scale#) = SIZEOF_HSFLOAT
 
 bOOL_INDEX :: Int# -> Int#
 #if SIZEOF_HSWORD == 4
@@ -1502,8 +1502,9 @@ bOOL_INDEX i# = i# `uncheckedIShiftRA#` 6#
 
 bOOL_BIT, bOOL_NOT_BIT :: Int# -> Word#
 bOOL_BIT     n# = int2Word# 1# `uncheckedShiftL#` (word2Int# (int2Word# n# `and#` mask#))
-  where W# mask# = SIZEOF_HSWORD * 8 - 1
-bOOL_NOT_BIT n# = bOOL_BIT n# `xor#` mb# where W# mb# = maxBound
+    where !(W# mask#) = SIZEOF_HSWORD * 8 - 1
+bOOL_NOT_BIT n# = bOOL_BIT n# `xor#` mb#
+    where !(W# mb#) = maxBound
 #endif /* __GLASGOW_HASKELL__ */
 
 #ifdef __HUGS__
