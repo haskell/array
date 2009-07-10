@@ -364,7 +364,7 @@ replaceDiffArray2 :: (MArray a e IO, Ix i)
                 -> [(Int, e)]
                 -> IO (IOToDiffArray a i e)
 arr `replaceDiffArray2` ies = do
-    mapM_ (\(a,b) -> do evaluate a; evaluate b) ies
+    mapM_ (\(a,b) -> evaluate a >> evaluate b) ies
     arr `replaceDiffArray` ies
 
 
