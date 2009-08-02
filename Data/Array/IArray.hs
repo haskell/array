@@ -10,7 +10,8 @@
 --
 -- Immutable arrays, with an overloaded interface.  For array types which
 -- can be used with this interface, see the 'Array' type exported by this
--- module, and the "Data.Array.Unboxed" and "Data.Array.Diff" modules.
+-- module and the "Data.Array.Unboxed" module. Other packages, such as
+-- diffarray, also provide arrays using this interface.
 --
 -----------------------------------------------------------------------------
 

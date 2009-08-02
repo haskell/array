@@ -359,8 +359,8 @@ Other implementations will also do this for unboxed arrays, but Haskell
 98 requires that for 'Array' the value at such indices is bottom.)
 
 For most array types, this operation is O(/n/) where /n/ is the size
-of the array.  However, the 'Data.Array.Diff.DiffArray' type provides
-this operation with complexity linear in the number of updates.
+of the array.  However, the diffarray package provides an array type
+for which this operation has complexity linear in the number of updates.
 -}
 (//) :: (IArray a e, Ix i) => a i e -> [(i, e)] -> a i e
 arr // ies = case bounds arr of
