@@ -125,20 +125,18 @@ unsafeReplaceST arr ies = do
 unsafeAccumST :: (IArray a e, Ix i) => (e -> e' -> e) -> a i e -> [(Int, e')] -> ST s (STArray s i e)
 unsafeAccumST f arr ies = do
     marr <- thaw arr
-    sequence_ [do
-        old <- unsafeRead marr i
-        unsafeWrite marr i (f old new)
-        | (i, new) <- ies]
+    sequence_ [do old <- unsafeRead marr i
+                  unsafeWrite marr i (f old new)
+              | (i, new) <- ies]
     return marr
 
 {-# INLINE unsafeAccumArrayST #-}
 unsafeAccumArrayST :: Ix i => (e -> e' -> e) -> e -> (i,i) -> [(Int, e')] -> ST s (STArray s i e)
 unsafeAccumArrayST f e (l,u) ies = do
     marr <- newArray (l,u) e
-    sequence_ [do
-        old <- unsafeRead marr i
-        unsafeWrite marr i (f old new)
-        | (i, new) <- ies]
+    sequence_ [do old <- unsafeRead marr i
+                  unsafeWrite marr i (f old new)
+              | (i, new) <- ies]
     return marr
 
 
@@ -476,10 +474,9 @@ unsafeAccumUArray :: (MArray (STUArray s) e (ST s), Ix i)
                   => (e -> e' -> e) -> UArray i e -> [(Int, e')] -> ST s (UArray i e)
 unsafeAccumUArray f arr ies = do
     marr <- thawSTUArray arr
-    sequence_ [do
-        old <- unsafeRead marr i
-        unsafeWrite marr i (f old new)
-        | (i, new) <- ies]
+    sequence_ [do old <- unsafeRead marr i
+                  unsafeWrite marr i (f old new)
+              | (i, new) <- ies]
     unsafeFreezeSTUArray marr
 
 {-# INLINE unsafeAccumArrayUArray #-}
@@ -487,10 +484,9 @@ unsafeAccumArrayUArray :: (MArray (STUArray s) e (ST s), Ix i)
                        => (e -> e' -> e) -> e -> (i,i) -> [(Int, e')] -> ST s (UArray i e)
 unsafeAccumArrayUArray f initialValue (l,u) ies = do
     marr <- newArray (l,u) initialValue
-    sequence_ [do
-        old <- unsafeRead marr i
-        unsafeWrite marr i (f old new)
-        | (i, new) <- ies]
+    sequence_ [do old <- unsafeRead marr i
+                  unsafeWrite marr i (f old new)
+              | (i, new) <- ies]
     unsafeFreezeSTUArray marr
 
 {-# INLINE eqUArray #-}
@@ -1065,10 +1061,9 @@ mapArray f marr = do
   (l,u) <- getBounds marr
   n <- getNumElements marr
   marr' <- newArray_ (l,u)
-  sequence_ [do
-        e <- unsafeRead marr i
-        unsafeWrite marr' i (f e)
-        | i <- [0 .. n - 1]]
+  sequence_ [do e <- unsafeRead marr i
+                unsafeWrite marr' i (f e)
+            | i <- [0 .. n - 1]]
   return marr'
 
 {-# INLINE mapIndices #-}
@@ -1078,10 +1073,9 @@ mapIndices :: (MArray a e m, Ix i, Ix j) => (i,i) -> (i -> j) -> a j e -> m (a i
 mapIndices (l',u') f marr = do
     marr' <- newArray_ (l',u')
     n' <- getNumElements marr'
-    sequence_ [do
-        e <- readArray marr (f i')
-        unsafeWrite marr' (safeIndex (l',u') n' i') e
-        | i' <- range (l',u')]
+    sequence_ [do e <- readArray marr (f i')
+                  unsafeWrite marr' (safeIndex (l',u') n' i') e
+              | i' <- range (l',u')]
     return marr'
 
 -----------------------------------------------------------------------------
