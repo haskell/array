@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -XNoBangPatterns -fno-warn-unused-imports #-}
+{-# OPTIONS_GHC -XBangPatterns -fno-warn-unused-imports #-}
 {-# OPTIONS_HADDOCK hide #-}
 -- XXX With a GHC 6.9 we get a spurious
 -- Data/Array/Base.hs:26:0:
@@ -295,7 +295,7 @@ type ListUArray e = forall i . Ix i => (i,i) -> [e] -> UArray i e
 {-# INLINE (!) #-}
 -- | Returns the element of an immutable array at the specified index.
 (!) :: (IArray a e, Ix i) => a i e -> i -> e
-arr ! i = case bounds arr of
+(!) arr i = case bounds arr of
               (l,u) -> unsafeAt arr $ safeIndex (l,u) (numElements arr) i
 
 {-# INLINE indices #-}
