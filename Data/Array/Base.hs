@@ -1164,10 +1164,7 @@ instance MArray (STUArray s) Bool (ST s) where
     {-# INLINE getNumElements #-}
     getNumElements (STUArray _ _ n _) = return n
     {-# INLINE newArray #-}
-    newArray (l,u) initialValue
-      = case if initialValue then maxBound else 0 of {
-        W# e# ->
-        ST $ \s1# ->
+    newArray (l,u) initialValue = ST $ \s1# ->
         case safeRangeSize (l,u)            of { n@(I# n#) ->
         case newByteArray# (bOOL_SCALE n#) s1# of { (# s2#, marr# #) ->
         case bOOL_WORD_SCALE n#         of { n'# ->
@@ -1176,7 +1173,9 @@ instance MArray (STUArray s) Bool (ST s) where
                 case writeWordArray# marr# i# e# s3# of { s4# ->
                 loop (i# +# 1#) s4# } in
         case loop 0# s2#                of { s3# ->
-        (# s3#, STUArray l u n marr# #) }}}}}
+        (# s3#, STUArray l u n marr# #) }}}}
+      where
+        !(W# e#) = if initialValue then maxBound else 0
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) bOOL_SCALE
     {-# INLINE newArray_ #-}
@@ -1487,16 +1486,13 @@ instance MArray (STUArray s) Word64 (ST s) where
 
 bOOL_SCALE, bOOL_WORD_SCALE,
   wORD_SCALE, dOUBLE_SCALE, fLOAT_SCALE :: Int# -> Int#
-bOOL_SCALE n# = case SIZEOF_HSWORD * 8 - 1 of
-                I# last# -> (n# +# last#) `uncheckedIShiftRA#` 3#
-bOOL_WORD_SCALE n# = case SIZEOF_HSWORD * 8 - 1 of
-                     I# last# -> bOOL_INDEX (n# +# last#)
-wORD_SCALE   n# = case SIZEOF_HSWORD of
-                  I# scale# -> scale# *# n#
-dOUBLE_SCALE n# = case SIZEOF_HSDOUBLE of
-                  I# scale# -> scale# *# n#
-fLOAT_SCALE  n# = case SIZEOF_HSFLOAT of
-                  I# scale# -> scale# *# n#
+bOOL_SCALE n# = (n# +# last#) `uncheckedIShiftRA#` 3#
+  where !(I# last#) = SIZEOF_HSWORD * 8 - 1
+bOOL_WORD_SCALE n# = bOOL_INDEX (n# +# last#)
+  where !(I# last#) = SIZEOF_HSWORD * 8 - 1
+wORD_SCALE   n# = scale# *# n# where !(I# scale#) = SIZEOF_HSWORD
+dOUBLE_SCALE n# = scale# *# n# where !(I# scale#) = SIZEOF_HSDOUBLE
+fLOAT_SCALE  n# = scale# *# n# where !(I# scale#) = SIZEOF_HSFLOAT
 
 bOOL_INDEX :: Int# -> Int#
 #if SIZEOF_HSWORD == 4
@@ -1506,12 +1502,10 @@ bOOL_INDEX i# = i# `uncheckedIShiftRA#` 6#
 #endif
 
 bOOL_BIT, bOOL_NOT_BIT :: Int# -> Word#
-bOOL_BIT n# = case SIZEOF_HSWORD * 8 - 1 of
-              W# mask# ->
-                  int2Word# 1# `uncheckedShiftL#`
-                  (word2Int# (int2Word# n# `and#` mask#))
-bOOL_NOT_BIT n# = case maxBound of
-                  W# mb# -> bOOL_BIT n# `xor#` mb#
+bOOL_BIT     n# = int2Word# 1# `uncheckedShiftL#` (word2Int# (int2Word# n# `and#` mask#))
+    where !(W# mask#) = SIZEOF_HSWORD * 8 - 1
+bOOL_NOT_BIT n# = bOOL_BIT n# `xor#` mb#
+    where !(W# mb#) = maxBound
 #endif /* __GLASGOW_HASKELL__ */
 
 #ifdef __HUGS__
