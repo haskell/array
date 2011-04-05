@@ -1,0 +1,4 @@
+# Specific generated files
+GNUmakefile
+dist-install/
+ghc.mk
