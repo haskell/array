@@ -74,8 +74,8 @@ hGetArray handle (IOUArray (STUArray _l _u n ptr)) count
       -- we would like to read directly into the buffer, but we can't
       -- be sure that the MutableByteArray# is pinned, so we have to
       -- allocate a separate area of memory and copy.
-      allocaBytes n $ \p -> do
-        r <- hGetBuf handle p n
+      allocaBytes count $ \p -> do
+        r <- hGetBuf handle p count
         memcpy_ba_ptr ptr p (fromIntegral r)
         return r
 
@@ -98,9 +98,9 @@ hPutArray handle (IOUArray (STUArray _l _u n raw)) count
   | otherwise = do
       -- as in hGetArray, we would like to use the array directly, but
       -- we can't be sure that the MutableByteArray# is pinned.
-     allocaBytes n $ \p -> do
-       memcpy_ptr_ba p raw (fromIntegral n)
-       hPutBuf handle p n
+     allocaBytes count $ \p -> do
+       memcpy_ptr_ba p raw (fromIntegral count)
+       hPutBuf handle p count
 
 foreign import ccall unsafe "memcpy"
    memcpy_ptr_ba :: Ptr a -> MutableByteArray# RealWorld -> CSize -> IO (Ptr ())
