@@ -15,8 +15,8 @@ build-type: Simple
 extra-source-files: include/Typeable.h
 
 source-repository head
-    type:     darcs
-    location: http://darcs.haskell.org/packages/array/
+    type:     git
+    location: http://darcs.haskell.org/packages/array.git/
 
 library
   build-depends: base >= 4.2 && < 5
