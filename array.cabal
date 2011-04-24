@@ -40,6 +40,8 @@ library
       TypeSynonymInstances
   if impl(ghc)
     extensions:
+      DeriveDataTypeable,
+      StandaloneDeriving,
       Rank2Types,
       MagicHash,
       UnboxedTuples,
