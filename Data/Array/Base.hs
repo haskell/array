@@ -12,7 +12,7 @@
 -- Module      :  Data.Array.Base
 -- Copyright   :  (c) The University of Glasgow 2001
 -- License     :  BSD-style (see the file libraries/base/LICENSE)
--- 
+--
 -- Maintainer  :  libraries@haskell.org
 -- Stability   :  experimental
 -- Portability :  non-portable (MPTCs, uses Control.Monad.ST)
@@ -32,17 +32,17 @@ import Foreign.C.Types
 import Foreign.StablePtr
 
 #ifdef __GLASGOW_HASKELL__
-import GHC.Arr		( STArray, unsafeIndex )
+import GHC.Arr          ( STArray, unsafeIndex )
 import qualified GHC.Arr as Arr
 import qualified GHC.Arr as ArrST
-import GHC.ST		( ST(..), runST )
+import GHC.ST           ( ST(..), runST )
 import GHC.Base
-import GHC.Word		( Word(..) )
-import GHC.Ptr		( Ptr(..), FunPtr(..), nullPtr, nullFunPtr )
-import GHC.Float	( Float(..), Double(..) )
-import GHC.Stable	( StablePtr(..) )
-import GHC.Int		( Int8(..),  Int16(..),  Int32(..),  Int64(..) )
-import GHC.Word		( Word8(..), Word16(..), Word32(..), Word64(..) )
+import GHC.Word         ( Word(..) )
+import GHC.Ptr          ( Ptr(..), FunPtr(..), nullPtr, nullFunPtr )
+import GHC.Float        ( Float(..), Double(..) )
+import GHC.Stable       ( StablePtr(..) )
+import GHC.Int          ( Int8(..),  Int16(..),  Int32(..),  Int64(..) )
+import GHC.Word         ( Word8(..), Word16(..), Word32(..), Word64(..) )
 #if __GLASGOW_HASKELL__ >= 611
 import GHC.IO           ( IO(..), stToIO )
 import GHC.IOArray      ( IOArray(..),
@@ -140,7 +140,7 @@ unsafeAccumArrayST f e (l,u) ies = do
     return marr
 
 
-{-# INLINE array #-} 
+{-# INLINE array #-}
 
 {-| Constructs an immutable array from a pair of bounds and a list of
 initial associations.
@@ -176,10 +176,10 @@ then the array is legal, but empty. Indexing an empty array always
 gives an array-bounds error, but 'bounds' still yields the bounds with
 which the array was constructed.
 -}
-array 	:: (IArray a e, Ix i) 
-	=> (i,i)	-- ^ bounds of the array: (lowest,highest)
-	-> [(i, e)]	-- ^ list of associations
-	-> a i e
+array   :: (IArray a e, Ix i)
+        => (i,i)        -- ^ bounds of the array: (lowest,highest)
+        -> [(i, e)]     -- ^ list of associations
+        -> a i e
 array (l,u) ies
     = let n = safeRangeSize (l,u)
       in unsafeArray (l,u)
@@ -239,11 +239,11 @@ listUArrayST (l,u) es = do
 --
 -- More precisely, we'd like to write this:
 --   listUArray :: (forall s. MArray (STUArray s) e (ST s), Ix i)
---	        => (i,i) -> [e] -> UArray i e
+--              => (i,i) -> [e] -> UArray i e
 --   listUArray lu = runST (listUArrayST lu es >>= unsafeFreezeSTUArray)
 --   {-# RULES listArray = listUArray
 -- Then we could call listUArray at any type 'e' that had a suitable
--- MArray instance.  But sadly we can't, because we don't have quantified 
+-- MArray instance.  But sadly we can't, because we don't have quantified
 -- constraints.  Hence the mass of rules below.
 
 -- I would like also to write a rule for listUArrayST (or listArray or
@@ -261,7 +261,7 @@ type ListUArray e = forall i . Ix i => (i,i) -> [e] -> UArray i e
    = (\lu es -> runST (listUArrayST lu es >>= unsafeFreezeSTUArray)) :: ListUArray Char
 "listArray/UArray/Int"       listArray
    = (\lu es -> runST (listUArrayST lu es >>= unsafeFreezeSTUArray)) :: ListUArray Int
-"listArray/UArray/Word"      listArray	
+"listArray/UArray/Word"      listArray
    = (\lu es -> runST (listUArrayST lu es >>= unsafeFreezeSTUArray)) :: ListUArray Word
 "listArray/UArray/Ptr"       listArray
    = (\lu es -> runST (listUArrayST lu es >>= unsafeFreezeSTUArray)) :: ListUArray (Ptr a)
@@ -318,7 +318,7 @@ assocs arr = case bounds arr of
 
 {-# INLINE accumArray #-}
 
-{-| 
+{-|
 Constructs an immutable array from a list of associations.  Unlike
 'array', the same index is allowed to occur multiple times in the list
 of associations; an /accumulating function/ is used to combine the
@@ -518,9 +518,9 @@ cmpIntUArray arr1@(UArray l1 u1 n1 _) arr2@(UArray l2 u2 n2 _) =
 -----------------------------------------------------------------------------
 -- Showing IArrays
 
-{-# SPECIALISE 
-    showsIArray :: (IArray UArray e, Ix i, Show i, Show e) => 
-		   Int -> UArray i e -> ShowS
+{-# SPECIALISE
+    showsIArray :: (IArray UArray e, Ix i, Show i, Show e) =>
+                   Int -> UArray i e -> ShowS
   #-}
 
 showsIArray :: (IArray a e, Ix i, Show i, Show e) => Int -> a i e -> ShowS
@@ -554,7 +554,7 @@ instance IArray UArray Bool where
 #endif
 #ifdef __HUGS__
     unsafeAt (UArray _ _ _ arr) i =
-	testBit (readByteArray arr (bOOL_INDEX i)::BitSet) (bOOL_SUBINDEX i)
+        testBit (readByteArray arr (bOOL_INDEX i)::BitSet) (bOOL_SUBINDEX i)
 #endif
     {-# INLINE unsafeReplace #-}
     unsafeReplace arr ies = runST (unsafeReplaceUArray arr ies)
@@ -942,7 +942,7 @@ class (Monad m) => MArray a e m where
     -- | Returns the number of elements in the array
     getNumElements :: Ix i => a i e -> m Int
 
-    -- | Builds a new array, with every element initialised to the supplied 
+    -- | Builds a new array, with every element initialised to the supplied
     -- value.
     newArray    :: Ix i => (i,i) -> e -> m (a i e)
 
@@ -960,9 +960,9 @@ class (Monad m) => MArray a e m where
     unsafeWrite :: Ix i => a i e -> Int -> e -> m ()
 
     {-# INLINE newArray #-}
-	-- The INLINE is crucial, because until we know at least which monad 	
-	-- we are in, the code below allocates like crazy.  So inline it,
-	-- in the hope that the context will know the monad.
+        -- The INLINE is crucial, because until we know at least which monad
+        -- we are in, the code below allocates like crazy.  So inline it,
+        -- in the hope that the context will know the monad.
     newArray (l,u) initialValue = do
         let n = safeRangeSize (l,u)
         marr <- unsafeNewArray_ (l,u)
@@ -1038,7 +1038,7 @@ writeArray marr i e = do
 {-# INLINE getElems #-}
 -- | Return a list of all the elements of a mutable array
 getElems :: (MArray a e m, Ix i) => a i e -> m [e]
-getElems marr = do 
+getElems marr = do
   (_l, _u) <- getBounds marr
   n <- getNumElements marr
   sequence [unsafeRead marr i | i <- [0 .. n - 1]]
@@ -1047,7 +1047,7 @@ getElems marr = do
 -- | Return a list of all the associations of a mutable array, in
 -- index order.
 getAssocs :: (MArray a e m, Ix i) => a i e -> m [(i, e)]
-getAssocs marr = do 
+getAssocs marr = do
   (l,u) <- getBounds marr
   n <- getNumElements marr
   sequence [ do e <- unsafeRead marr (safeIndex (l,u) n i); return (i,e)
@@ -1057,7 +1057,7 @@ getAssocs marr = do
 -- | Constructs a new array derived from the original array by applying a
 -- function to each of the elements.
 mapArray :: (MArray a e' m, MArray a e m, Ix i) => (e' -> e) -> a i e' -> m (a i e)
-mapArray f marr = do 
+mapArray f marr = do
   (l,u) <- getBounds marr
   n <- getNumElements marr
   marr' <- newArray_ (l,u)
@@ -1401,7 +1401,7 @@ instance MArray (STUArray s) Int64 (ST s) where
     {-# INLINE newArray_ #-}
     newArray_ arrBounds = newArray arrBounds 0
     {-# INLINE unsafeRead #-}
-    unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# -> 
+    unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readInt64Array# marr# i# s1# of { (# s2#, e# #) ->
         (# s2#, I64# e# #) }
     {-# INLINE unsafeWrite #-}
@@ -1539,16 +1539,16 @@ instance MArray (STUArray s) Bool (ST s) where
         return (STUArray l u n marr)
     newArray_ bounds = unsafeNewArray_ bounds
     unsafeRead (STUArray _ _ _ marr) i = do
-	let ix = bOOL_INDEX i
-	    bit = bOOL_SUBINDEX i
-	w <- readMutableByteArray marr ix
-	return (testBit (w::BitSet) bit)
+        let ix = bOOL_INDEX i
+            bit = bOOL_SUBINDEX i
+        w <- readMutableByteArray marr ix
+        return (testBit (w::BitSet) bit)
     unsafeWrite (STUArray _ _ _ marr) i e = do
-	let ix = bOOL_INDEX i
-	    bit = bOOL_SUBINDEX i
-	w <- readMutableByteArray marr ix
-	writeMutableByteArray marr ix
-	    (if e then setBit (w::BitSet) bit else clearBit w bit)
+        let ix = bOOL_INDEX i
+            bit = bOOL_SUBINDEX i
+        w <- readMutableByteArray marr ix
+        writeMutableByteArray marr ix
+            (if e then setBit (w::BitSet) bit else clearBit w bit)
 
 instance MArray (STUArray s) Char (ST s) where
     getBounds = getBoundsMBArray
@@ -1684,7 +1684,7 @@ bitSetSize = bitSize (0::BitSet)
 
 bOOL_SCALE :: Int -> Int
 bOOL_SCALE n = (n + bitSetSize - 1) `div` bitSetSize
- 
+
 bOOL_INDEX :: Int -> Int
 bOOL_INDEX i = i `div` bitSetSize
 
@@ -1733,7 +1733,7 @@ foreign import ccall unsafe "memcpy"
 -- freeze it (and, subsequently mutate it, I suspect).
 
 {- |
-   Converts an mutable array into an immutable array.  The 
+   Converts an mutable array into an immutable array.  The
    implementation may either simply cast the array from
    one type to the other without copying the array, or it
    may take a full copy of the array.
@@ -1812,10 +1812,10 @@ thawSTUArray (UArray l u n arr) = do
 -- thaw it (and, subsequently mutate it, I suspect).
 
 {- |
-   Converts an immutable array into a mutable array.  The 
+   Converts an immutable array into a mutable array.  The
    implementation may either simply cast the array from
    one type to the other without copying the array, or it
-   may take a full copy of the array.  
+   may take a full copy of the array.
 
    Note that because the array is possibly not copied, any subsequent
    modifications made to the mutable version of the array may be
@@ -1904,3 +1904,4 @@ castSTUArray (STUArray l u n marr#) = return (STUArray l u n marr#)
 #elif __HUGS__
 castSTUArray (STUArray l u n marr) = return (STUArray l u n marr)
 #endif
+

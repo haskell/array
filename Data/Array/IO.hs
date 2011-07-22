@@ -5,7 +5,7 @@
 -- Module      :  Data.Array.IO
 -- Copyright   :  (c) The University of Glasgow 2001
 -- License     :  BSD-style (see the file libraries/base/LICENSE)
--- 
+--
 -- Maintainer  :  libraries@haskell.org
 -- Stability   :  experimental
 -- Portability :  non-portable (uses Data.Array.MArray)
@@ -15,20 +15,20 @@
 -----------------------------------------------------------------------------
 
 module Data.Array.IO (
-   -- * @IO@ arrays with boxed elements
-   IOArray,		-- instance of: Eq, Typeable
+    -- * @IO@ arrays with boxed elements
+    IOArray,             -- instance of: Eq, Typeable
 
-   -- * @IO@ arrays with unboxed elements
-   IOUArray,		-- instance of: Eq, Typeable
-   castIOUArray,	-- :: IOUArray i a -> IO (IOUArray i b)
+    -- * @IO@ arrays with unboxed elements
+    IOUArray,            -- instance of: Eq, Typeable
+    castIOUArray,        -- :: IOUArray i a -> IO (IOUArray i b)
 
-   -- * Overloaded mutable array interface
-   module Data.Array.MArray,
+    -- * Overloaded mutable array interface
+    module Data.Array.MArray,
 
-   -- * Doing I\/O with @IOUArray@s
-   hGetArray,		-- :: Handle -> IOUArray Int Word8 -> Int -> IO Int
-   hPutArray,		-- :: Handle -> IOUArray Int Word8 -> Int -> IO ()
- ) where
+    -- * Doing I\/O with @IOUArray@s
+    hGetArray,           -- :: Handle -> IOUArray Int Word8 -> Int -> IO Int
+    hPutArray,           -- :: Handle -> IOUArray Int Word8 -> Int -> IO ()
+  ) where
 
 import Data.Array.Base
 import Data.Array.IO.Internals
@@ -59,13 +59,13 @@ import System.IO
 -- | Reads a number of 'Word8's from the specified 'Handle' directly
 -- into an array.
 hGetArray
- 	:: Handle		-- ^ Handle to read from
-	-> IOUArray Int Word8	-- ^ Array in which to place the values
-	-> Int			-- ^ Number of 'Word8's to read
-	-> IO Int
-		-- ^ Returns: the number of 'Word8's actually 
-		-- read, which might be smaller than the number requested
-		-- if the end of file was reached.
+        :: Handle               -- ^ Handle to read from
+        -> IOUArray Int Word8   -- ^ Array in which to place the values
+        -> Int                  -- ^ Number of 'Word8's to read
+        -> IO Int
+                -- ^ Returns: the number of 'Word8's actually
+                -- read, which might be smaller than the number requested
+                -- if the end of file was reached.
 
 hGetArray handle (IOUArray (STUArray _l _u n ptr)) count
   | count == 0              = return 0
@@ -87,10 +87,10 @@ foreign import ccall unsafe "memcpy"
 
 -- | Writes an array of 'Word8' to the specified 'Handle'.
 hPutArray
-	:: Handle			-- ^ Handle to write to
-	-> IOUArray Int Word8		-- ^ Array to write from
-	-> Int				-- ^ Number of 'Word8's to write
-	-> IO ()
+        :: Handle                       -- ^ Handle to write to
+        -> IOUArray Int Word8           -- ^ Array to write from
+        -> Int                          -- ^ Number of 'Word8's to write
+        -> IO ()
 
 hPutArray handle (IOUArray (STUArray _l _u n raw)) count
   | count == 0              = return ()
@@ -109,44 +109,45 @@ foreign import ccall unsafe "memcpy"
 -- Internal Utils
 
 illegalBufferSize :: Handle -> String -> Int -> IO a
-illegalBufferSize handle fn sz = 
-	ioException (ioeSetErrorString
-		     (mkIOError InvalidArgument fn (Just handle) Nothing)
-		     ("illegal buffer size " ++ showsPrec 9 (sz::Int) []))
+illegalBufferSize handle fn sz =
+        ioException (ioeSetErrorString
+                     (mkIOError InvalidArgument fn (Just handle) Nothing)
+                     ("illegal buffer size " ++ showsPrec 9 (sz::Int) []))
 
 #else /* !__GLASGOW_HASKELL__ */
 hGetArray :: Handle -> IOUArray Int Word8 -> Int -> IO Int
 hGetArray handle arr count = do
-	bds <- getBounds arr
-	if count < 0 || count > rangeSize bds
-	   then illegalBufferSize handle "hGetArray" count
-	   else get 0
+        bds <- getBounds arr
+        if count < 0 || count > rangeSize bds
+           then illegalBufferSize handle "hGetArray" count
+           else get 0
  where
   get i | i == count = return i
-	| otherwise = do
-		error_or_c <- try (hGetChar handle)
-		case error_or_c of
-		    Left ex
-			| isEOFError ex -> return i
-			| otherwise -> ioError ex
-		    Right c -> do
-			unsafeWrite arr i (fromIntegral (ord c))
-			get (i+1)
+        | otherwise = do
+                error_or_c <- try (hGetChar handle)
+                case error_or_c of
+                    Left ex
+                        | isEOFError ex -> return i
+                        | otherwise -> ioError ex
+                    Right c -> do
+                        unsafeWrite arr i (fromIntegral (ord c))
+                        get (i+1)
 
 hPutArray :: Handle -> IOUArray Int Word8 -> Int -> IO ()
 hPutArray handle arr count = do
-	bds <- getBounds arr
-	if count < 0 || count > rangeSize bds
-	   then illegalBufferSize handle "hPutArray" count
-	   else put 0
+        bds <- getBounds arr
+        if count < 0 || count > rangeSize bds
+           then illegalBufferSize handle "hPutArray" count
+           else put 0
  where
   put i | i == count = return ()
-	| otherwise = do
-		w <- unsafeRead arr i
-		hPutChar handle (chr (fromIntegral w))
-		put (i+1)
+        | otherwise = do
+                w <- unsafeRead arr i
+                hPutChar handle (chr (fromIntegral w))
+                put (i+1)
 
 illegalBufferSize :: Handle -> String -> Int -> IO a
 illegalBufferSize _ fn sz = ioError $
-	userError (fn ++ ": illegal buffer size " ++ showsPrec 9 (sz::Int) [])
+        userError (fn ++ ": illegal buffer size " ++ showsPrec 9 (sz::Int) [])
 #endif /* !__GLASGOW_HASKELL__ */
+

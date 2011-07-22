@@ -3,7 +3,7 @@
 -- Module      :  Data.Array.Storable
 -- Copyright   :  (c) The University of Glasgow 2001
 -- License     :  BSD-style (see the file libraries/base/LICENSE)
--- 
+--
 -- Maintainer  :  libraries@haskell.org
 -- Stability   :  experimental
 -- Portability :  non-portable (uses Data.Array.MArray)
@@ -20,25 +20,23 @@
 -----------------------------------------------------------------------------
 
 module Data.Array.Storable (
-    
     -- * Arrays of 'Storable' things.
     StorableArray, -- data StorableArray index element
-                   --     -- index type must be in class Ix
-                   --     -- element type must be in class Storable
-    
+                   --  + index type must be in class Ix
+                   --  + element type must be in class Storable
+
     -- * Overloaded mutable array interface
     -- | Module "Data.Array.MArray" provides the interface of storable arrays.
     -- They are instances of class 'MArray' (with the 'IO' monad).
     module Data.Array.MArray,
-    
+
     -- * Accessing the pointer to the array contents
-    withStorableArray, -- :: StorableArray i e -> (Ptr e -> IO a) -> IO a
-    
+    withStorableArray,  -- :: StorableArray i e -> (Ptr e -> IO a) -> IO a
+
     touchStorableArray, -- :: StorableArray i e -> IO ()
 
     unsafeForeignPtrToStorableArray
-    )
-    where
+  ) where
 
 import Data.Array.Base
 import Data.Array.MArray
@@ -93,3 +91,4 @@ unsafeForeignPtrToStorableArray
    :: Ix i => ForeignPtr e -> (i,i) -> IO (StorableArray i e)
 unsafeForeignPtrToStorableArray p (l,u) =
    return (StorableArray l u (rangeSize (l,u)) p)
+

@@ -3,7 +3,7 @@
 -- Module      :  Data.Array.IArray
 -- Copyright   :  (c) The University of Glasgow 2001
 -- License     :  BSD-style (see the file libraries/base/LICENSE)
--- 
+--
 -- Maintainer  :  libraries@haskell.org
 -- Stability   :  experimental
 -- Portability :  non-portable (uses Data.Array.Base)
@@ -15,14 +15,14 @@
 --
 -----------------------------------------------------------------------------
 
-module Data.Array.IArray ( 
+module Data.Array.IArray (
     -- * Array classes
     IArray,     -- :: (* -> * -> *) -> * -> class
 
     module Data.Ix,
 
     -- * Immutable non-strict (boxed) arrays
-    Array,    
+    Array,
 
     -- * Array construction
     array,      -- :: (IArray a e, Ix i) => (i,i) -> [(i, e)] -> a i e
@@ -43,8 +43,9 @@ module Data.Array.IArray (
     -- * Derived arrays
     amap,       -- :: (IArray a e', IArray a e, Ix i) => (e' -> e) -> a i e' -> a i e
     ixmap,      -- :: (IArray a e, Ix i, Ix j) => (i,i) -> (i -> j) -> a j e -> a i e
- )  where
+  ) where
 
 import Data.Ix
 import Data.Array (Array)
 import Data.Array.Base
+

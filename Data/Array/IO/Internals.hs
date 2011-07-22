@@ -4,7 +4,7 @@
 -- Module      :  Data.Array.IO.Internal
 -- Copyright   :  (c) The University of Glasgow 2001
 -- License     :  BSD-style (see the file libraries/base/LICENSE)
--- 
+--
 -- Maintainer  :  libraries@haskell.org
 -- Stability   :  experimental
 -- Portability :  non-portable (uses Data.Array.Base)
@@ -15,27 +15,28 @@
 
 -- #hide
 module Data.Array.IO.Internals (
-   IOArray(..),		-- instance of: Eq, Typeable
-   IOUArray(..),	-- instance of: Eq, Typeable
-   castIOUArray,	-- :: IOUArray ix a -> IO (IOUArray ix b)
+    IOArray(..),         -- instance of: Eq, Typeable
+    IOUArray(..),        -- instance of: Eq, Typeable
+    castIOUArray,        -- :: IOUArray ix a -> IO (IOUArray ix b)
 #ifdef __GLASGOW_HASKELL__
-   unsafeThawIOUArray,
+    unsafeThawIOUArray,
 #endif
- ) where
+  ) where
 
 import Data.Int
 import Data.Word
 import Data.Typeable
 
+import Control.Monad.ST         ( RealWorld, stToIO )
+import Foreign.Ptr              ( Ptr, FunPtr )
+import Foreign.StablePtr        ( StablePtr )
+
+import Data.Ix
+import Data.Array.Base
+
 #ifdef __HUGS__
 import Hugs.IOArray
 #endif
-
-import Control.Monad.ST		( RealWorld, stToIO )
-import Foreign.Ptr		( Ptr, FunPtr )
-import Foreign.StablePtr	( StablePtr )
-import Data.Array.Base
-import Data.Ix
 
 #ifdef __GLASGOW_HASKELL__
 #if __GLASGOW_HASKELL__ >= 611
@@ -414,3 +415,4 @@ freezeIOUArray (IOUArray marr) = stToIO (freezeSTUArray marr)
 "freeze/IOUArray" freeze = freezeIOUArray
     #-}
 #endif /* __GLASGOW_HASKELL__ */
+

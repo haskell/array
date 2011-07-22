@@ -3,18 +3,18 @@
 -- Module      :  Data.Array.MArray
 -- Copyright   :  (c) The University of Glasgow 2001
 -- License     :  BSD-style (see the file libraries/base/LICENSE)
--- 
+--
 -- Maintainer  :  libraries@haskell.org
 -- Stability   :  experimental
 -- Portability :  non-portable (uses Data.Array.Base)
 --
 -- An overloaded interface to mutable arrays.  For array types which can be
--- used with this interface, see "Data.Array.IO", "Data.Array.ST", 
+-- used with this interface, see "Data.Array.IO", "Data.Array.ST",
 -- and "Data.Array.Storable".
 --
 -----------------------------------------------------------------------------
 
-module Data.Array.MArray ( 
+module Data.Array.MArray (
     -- * Class of mutable array types
     MArray,       -- :: (* -> * -> *) -> * -> (* -> *) -> class
 
@@ -47,7 +47,7 @@ module Data.Array.MArray (
   ) where
 
 import Data.Ix
+import Data.Array.Base
 #ifdef __HADDOCK__
 import Data.Array.IArray
 #endif
-import Data.Array.Base
