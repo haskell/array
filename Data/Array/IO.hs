@@ -31,7 +31,8 @@ module Data.Array.IO (
   ) where
 
 import Data.Array.Base
-import Data.Array.IO.Internals
+import Data.Array.IO.Internals hiding ( castIOUArray )
+import qualified Data.Array.Unsafe as U ( castIOUArray )
 import Data.Array.MArray
 import System.IO.Error
 
@@ -150,4 +151,15 @@ illegalBufferSize :: Handle -> String -> Int -> IO a
 illegalBufferSize _ fn sz = ioError $
         userError (fn ++ ": illegal buffer size " ++ showsPrec 9 (sz::Int) [])
 #endif /* !__GLASGOW_HASKELL__ */
+
+
+{-# DEPRECATED castIOUArray
+              "Please import from Data.Array.Unsafe instead; This will be removed in the next release"
+ #-}
+-- | Casts an 'IOUArray' with one element type into one with a
+-- different element type.  All the elements of the resulting array
+-- are undefined (unless you know what you\'re doing...).
+{-# INLINE castIOUArray #-}
+castIOUArray :: IOUArray i a -> IO (IOUArray i b)
+castIOUArray = U.castIOUArray
 

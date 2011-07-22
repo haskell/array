@@ -28,11 +28,17 @@ library
       Data.Array.Base
       Data.Array.IArray
       Data.Array.IO
+      Data.Array.IO.Safe
       Data.Array.IO.Internals
       Data.Array.MArray
+      Data.Array.MArray.Safe
       Data.Array.ST
+      Data.Array.ST.Safe
       Data.Array.Storable
+      Data.Array.Storable.Safe
+      Data.Array.Storable.Internals
       Data.Array.Unboxed
+      Data.Array.Unsafe
     extensions:
       MultiParamTypeClasses,
       FlexibleContexts,
