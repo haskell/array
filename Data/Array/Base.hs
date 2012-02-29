@@ -32,6 +32,7 @@ import Foreign.C.Types
 import Foreign.StablePtr
 
 #ifdef __GLASGOW_HASKELL__
+import Data.Char
 import GHC.Arr          ( STArray, unsafeIndex )
 import qualified GHC.Arr as Arr
 import qualified GHC.Arr as ArrST
