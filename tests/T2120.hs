@@ -3,7 +3,6 @@ module Main (main) where
 
 import Control.Exception
 import Data.Array.IArray
-import Prelude hiding (catch)
 
 a :: Array Int Int
 a = listArray (1,4) [1..4]
