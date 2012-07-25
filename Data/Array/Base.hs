@@ -193,7 +193,7 @@ array (l,u) ies
 -- fast unsafeFreeze, namely for Array and UArray (well, they cover
 -- almost all cases).
 
-{-# INLINE listArray #-}
+{-# INLINE [1] listArray #-}
 
 -- | Constructs an immutable array from a list of initial elements.
 -- The list gives the elements of the array in ascending order
@@ -497,7 +497,7 @@ eqUArray arr1@(UArray l1 u1 n1 _) arr2@(UArray l2 u2 n2 _) =
     l1 == l2 && u1 == u2 &&
     and [unsafeAt arr1 i == unsafeAt arr2 i | i <- [0 .. n1 - 1]]
 
-{-# INLINE cmpUArray #-}
+{-# INLINE [1] cmpUArray #-}
 cmpUArray :: (IArray UArray e, Ix i, Ord e) => UArray i e -> UArray i e -> Ordering
 cmpUArray arr1 arr2 = compare (assocs arr1) (assocs arr2)
 
@@ -1700,6 +1700,7 @@ bOOL_SUBINDEX i = i `mod` bitSetSize
 -- immutable array (any instance of 'IArray') by taking a complete
 -- copy of it.
 freeze :: (Ix i, MArray a e m, IArray b e) => a i e -> m (b i e)
+{-# NOINLINE [1] freeze #-}
 freeze marr = do
   (l,u) <- getBounds marr
   n <- getNumElements marr
@@ -1760,7 +1761,7 @@ foreign import ccall unsafe "memcpy"
 
      * 'Data.Array.ST.STArray' -> 'Data.Array.Array'
 -}
-{-# INLINE unsafeFreeze #-}
+{-# INLINE [1] unsafeFreeze #-}
 unsafeFreeze :: (Ix i, MArray a e m, IArray b e) => a i e -> m (b i e)
 unsafeFreeze = freeze
 
@@ -1776,6 +1777,7 @@ unsafeFreeze = freeze
 -- mutable array (any instance of 'MArray') by taking a complete copy
 -- of it.
 thaw :: (Ix i, IArray a e, MArray b e m) => a i e -> m (b i e)
+{-# NOINLINE [1] thaw #-}
 thaw arr = case bounds arr of
   (l,u) -> do
     marr <- newArray_ (l,u)
@@ -1845,7 +1847,7 @@ thawSTUArray (UArray l u n arr) = do
 
      * 'Data.Array.Array'  -> 'Data.Array.ST.STArray'
 -}
-{-# INLINE unsafeThaw #-}
+{-# INLINE [1] unsafeThaw #-}
 unsafeThaw :: (Ix i, IArray a e, MArray b e m) => a i e -> m (b i e)
 unsafeThaw = thaw
 
