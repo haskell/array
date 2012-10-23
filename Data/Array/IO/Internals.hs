@@ -1,9 +1,8 @@
 {-# OPTIONS_HADDOCK hide #-}
-{-# OPTIONS_GHC -#include "HsBase.h" #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Array.IO.Internal
--- Copyright   :  (c) The University of Glasgow 2001
+-- Copyright   :  (c) The University of Glasgow 2001-2012
 -- License     :  BSD-style (see the file libraries/base/LICENSE)
 --
 -- Maintainer  :  libraries@haskell.org
