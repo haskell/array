@@ -39,11 +39,7 @@ import Hugs.IOArray
 #endif
 
 #ifdef __GLASGOW_HASKELL__
-#if __GLASGOW_HASKELL__ >= 611
 import GHC.IOArray (IOArray(..))
-#else
-import GHC.IOBase (IOArray(..))
-#endif
 #endif /* __GLASGOW_HASKELL__ */
 
 #include "Typeable.h"

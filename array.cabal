@@ -20,7 +20,7 @@ source-repository head
     location: http://darcs.haskell.org/packages/array.git/
 
 library
-  build-depends: base >= 4.2 && < 5
+  build-depends: base >= 4.5 && < 5
   exposed-modules:
       Data.Array
   extensions: CPP
