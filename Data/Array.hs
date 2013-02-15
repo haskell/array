@@ -64,10 +64,6 @@ import GHC.Arr  -- Most of the hard work is done here
 import Hugs.Array
 #endif
 
-#ifdef __NHC__
-import Array    -- Haskell'98 arrays
-#endif
-
 {- $intro
 Haskell provides indexable /arrays/, which may be thought of as functions
 whose domains are isomorphic to contiguous subsets of the integers.
