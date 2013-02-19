@@ -44,9 +44,7 @@ import Data.Array.MArray
 import Data.Array.Storable.Internals hiding ( unsafeForeignPtrToStorableArray )
 import qualified Data.Array.Unsafe as U ( unsafeForeignPtrToStorableArray )
 
-{-# DEPRECATED unsafeForeignPtrToStorableArray
-              "Please import from Data.Array.Unsafe instead; This will be removed in the next release"
- #-}
+{-# DEPRECATED unsafeForeignPtrToStorableArray "Please import from Data.Array.Unsafe instead; This will be removed in the next release" #-} -- deprecated in 7.4
 
 -- |Construct a 'StorableArray' from an arbitrary 'ForeignPtr'.  It is
 -- the caller's responsibility to ensure that the 'ForeignPtr' points to

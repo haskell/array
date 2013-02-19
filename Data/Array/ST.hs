@@ -74,9 +74,7 @@ runSTUArray st = runST (st >>= unsafeFreezeSTUArray)
 -- this essentially constrains us to a single unsafeFreeze for all STUArrays
 -- (in theory we might have a different one for certain element types).
 
-{-# DEPRECATED castSTUArray
-              "Please import from Data.Array.Unsafe instead; This will be removed in the next release"
- #-}
+{-# DEPRECATED castSTUArray "Please import from Data.Array.Unsafe instead; This will be removed in the next release" #-} -- deprecated in 7.4
 
 -- | Casts an 'STUArray' with one element type into one with a
 -- different element type.  All the elements of the resulting array

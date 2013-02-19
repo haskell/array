@@ -153,9 +153,7 @@ illegalBufferSize _ fn sz = ioError $
 #endif /* !__GLASGOW_HASKELL__ */
 
 
-{-# DEPRECATED castIOUArray
-              "Please import from Data.Array.Unsafe instead; This will be removed in the next release"
- #-}
+{-# DEPRECATED castIOUArray "Please import from Data.Array.Unsafe instead; This will be removed in the next release" #-} -- deprecated in 7.4
 -- | Casts an 'IOUArray' with one element type into one with a
 -- different element type.  All the elements of the resulting array
 -- are undefined (unless you know what you\'re doing...).

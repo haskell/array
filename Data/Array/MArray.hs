@@ -53,9 +53,7 @@ import qualified Data.Array.Base as U ( unsafeFreeze, unsafeThaw )
 import Data.Array.IArray
 #endif
 
-{-# DEPRECATED unsafeFreeze, unsafeThaw
-              "Please import from Data.Array.Unsafe instead; This will be removed in the next release"
- #-}
+{-# DEPRECATED unsafeFreeze, unsafeThaw "Please import from Data.Array.Unsafe instead; This will be removed in the next release" #-} -- deprecated in 7.4
 
 {- |
    Converts an mutable array into an immutable array.  The
