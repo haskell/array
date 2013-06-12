@@ -1135,7 +1135,7 @@ INSTANCE_TYPEABLE3(STUArray,stUArrayTc,"STUArray")
 #ifdef __GLASGOW_HASKELL__
 instance Eq (STUArray s i e) where
     STUArray _ _ _ arr1# == STUArray _ _ _ arr2# =
-        sameMutableByteArray# arr1# arr2#
+        tagToEnum# (sameMutableByteArray# arr1# arr2#)
 #endif
 #ifdef __HUGS__
 instance Eq (STUArray s i e) where
