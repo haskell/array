@@ -17,7 +17,7 @@ extra-source-files: include/Typeable.h
 
 source-repository head
     type:     git
-    location: http://darcs.haskell.org/packages/array.git/
+    location: http://git.haskell.org/packages/array.git
 
 library
   build-depends: base >= 4.5 && < 5
