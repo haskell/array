@@ -34,10 +34,6 @@ import Foreign.StablePtr        ( StablePtr )
 import Data.Ix
 import Data.Array.Base
 
-#ifdef __HUGS__
-import Hugs.IOArray
-#endif
-
 #ifdef __GLASGOW_HASKELL__
 import GHC.IOArray (IOArray(..))
 #endif /* __GLASGOW_HASKELL__ */

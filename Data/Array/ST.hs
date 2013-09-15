@@ -31,11 +31,6 @@ import Data.Array.MArray
 import qualified Data.Array.Unsafe as U ( castSTUArray )
 import Control.Monad.ST ( ST, runST )
 
-#ifdef __HUGS__
-import Hugs.Array       ( Array )
-import Hugs.ST          ( STArray, unsafeFreezeSTArray )
-#endif
-
 #ifdef __GLASGOW_HASKELL__
 import GHC.Arr          ( STArray, Array, unsafeFreezeSTArray )
 #endif
