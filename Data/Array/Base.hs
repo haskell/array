@@ -503,9 +503,14 @@ instance IArray UArray Bool where
     {-# INLINE unsafeArray #-}
     unsafeArray lu ies = runST (unsafeArrayUArray lu ies False)
     {-# INLINE unsafeAt #-}
+#if __GLASGOW_HASKELL__ > 706
+    unsafeAt (UArray _ _ _ arr#) (I# i#) = isTrue#
+#else
     unsafeAt (UArray _ _ _ arr#) (I# i#) =
-        (indexWordArray# arr# (bOOL_INDEX i#) `and#` bOOL_BIT i#)
-        `neWord#` int2Word# 0#
+#endif
+        ((indexWordArray# arr# (bOOL_INDEX i#) `and#` bOOL_BIT i#)
+        `neWord#` int2Word# 0#)
+
     {-# INLINE unsafeReplace #-}
     unsafeReplace arr ies = runST (unsafeReplaceUArray arr ies)
     {-# INLINE unsafeAccum #-}
@@ -988,7 +993,11 @@ data STUArray s i e = STUArray !i !i !Int (MutableByteArray# s)
 
 instance Eq (STUArray s i e) where
     STUArray _ _ _ arr1# == STUArray _ _ _ arr2# =
-        tagToEnum# (sameMutableByteArray# arr1# arr2#)
+#if __GLASGOW_HASKELL__ > 706
+        isTrue# (sameMutableByteArray# arr1# arr2#)
+#else
+        sameMutableByteArray# arr1# arr2#
+#endif
 
 {-# INLINE unsafeNewArraySTUArray_ #-}
 unsafeNewArraySTUArray_ :: Ix i
@@ -1011,8 +1020,12 @@ instance MArray (STUArray s) Bool (ST s) where
         case safeRangeSize (l,u)            of { n@(I# n#) ->
         case newByteArray# (bOOL_SCALE n#) s1# of { (# s2#, marr# #) ->
         case bOOL_WORD_SCALE n#         of { n'# ->
-        let loop i# s3# | i# ==# n'# = s3#
-                        | otherwise  =
+#if __GLASGOW_HASKELL__ > 706
+        let loop i# s3# | isTrue# (i# ==# n'#) = s3#
+#else
+        let loop i# s3# | i# ==# n'#           = s3#
+#endif
+                        | otherwise            =
                 case writeWordArray# marr# i# e# s3# of { s4# ->
                 loop (i# +# 1#) s4# } in
         case loop 0# s2#                of { s3# ->
@@ -1026,7 +1039,7 @@ instance MArray (STUArray s) Bool (ST s) where
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readWordArray# marr# (bOOL_INDEX i#) s1# of { (# s2#, e# #) ->
-        (# s2#, (e# `and#` bOOL_BIT i#) `neWord#` int2Word# 0# #) }
+        (# s2#, isTrue# ((e# `and#` bOOL_BIT i#) `neWord#` int2Word# 0#) :: Bool #) }
     {-# INLINE unsafeWrite #-}
     unsafeWrite (STUArray _ _ _ marr#) (I# i#) e = ST $ \s1# ->
         case bOOL_INDEX i#              of { j# ->
