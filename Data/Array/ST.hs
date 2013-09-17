@@ -31,9 +31,7 @@ import Data.Array.MArray
 import qualified Data.Array.Unsafe as U ( castSTUArray )
 import Control.Monad.ST ( ST, runST )
 
-#ifdef __GLASGOW_HASKELL__
 import GHC.Arr          ( STArray, Array, unsafeFreezeSTArray )
-#endif
 
 -- | A safe way to create and work with a mutable array before returning an
 -- immutable array for later perusal.  This function avoids copying

@@ -36,7 +36,6 @@ import qualified Data.Array.Unsafe as U ( castIOUArray )
 import Data.Array.MArray
 import System.IO.Error
 
-#ifdef __GLASGOW_HASKELL__
 import Foreign
 import Foreign.C
 
@@ -47,13 +46,6 @@ import GHC.IO.Handle
 import GHC.IO.Buffer
 import GHC.IO.Exception
 
-#else
-import Data.Char
-import Data.Word ( Word8 )
-import System.IO
-#endif
-
-#ifdef __GLASGOW_HASKELL__
 -- ---------------------------------------------------------------------------
 -- hGetArray
 
@@ -114,44 +106,6 @@ illegalBufferSize handle fn sz =
         ioException (ioeSetErrorString
                      (mkIOError InvalidArgument fn (Just handle) Nothing)
                      ("illegal buffer size " ++ showsPrec 9 (sz::Int) []))
-
-#else /* !__GLASGOW_HASKELL__ */
-hGetArray :: Handle -> IOUArray Int Word8 -> Int -> IO Int
-hGetArray handle arr count = do
-        bds <- getBounds arr
-        if count < 0 || count > rangeSize bds
-           then illegalBufferSize handle "hGetArray" count
-           else get 0
- where
-  get i | i == count = return i
-        | otherwise = do
-                error_or_c <- try (hGetChar handle)
-                case error_or_c of
-                    Left ex
-                        | isEOFError ex -> return i
-                        | otherwise -> ioError ex
-                    Right c -> do
-                        unsafeWrite arr i (fromIntegral (ord c))
-                        get (i+1)
-
-hPutArray :: Handle -> IOUArray Int Word8 -> Int -> IO ()
-hPutArray handle arr count = do
-        bds <- getBounds arr
-        if count < 0 || count > rangeSize bds
-           then illegalBufferSize handle "hPutArray" count
-           else put 0
- where
-  put i | i == count = return ()
-        | otherwise = do
-                w <- unsafeRead arr i
-                hPutChar handle (chr (fromIntegral w))
-                put (i+1)
-
-illegalBufferSize :: Handle -> String -> Int -> IO a
-illegalBufferSize _ fn sz = ioError $
-        userError (fn ++ ": illegal buffer size " ++ showsPrec 9 (sz::Int) [])
-#endif /* !__GLASGOW_HASKELL__ */
-
 
 {-# DEPRECATED castIOUArray "Please import from Data.Array.Unsafe instead; This will be removed in the next release" #-} -- deprecated in 7.4
 -- | Casts an 'IOUArray' with one element type into one with a
