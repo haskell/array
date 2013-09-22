@@ -1,12 +1,5 @@
 {-# LANGUAGE BangPatterns, CPP, RankNTypes, MagicHash, UnboxedTuples, MultiParamTypeClasses, FlexibleInstances, FlexibleContexts, DeriveDataTypeable, UnliftedFFITypes #-}
-{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 {-# OPTIONS_HADDOCK hide #-}
--- XXX With a GHC 6.9 we get a spurious
--- Data/Array/Base.hs:26:0:
---     Warning: Module `Data.Ix' is imported, but nothing from it is used,
---                except perhaps instances visible in `Data.Ix'
---              To suppress this warning, use: import Data.Ix()
--- The -fno-warn-unused-imports works around that bug
 
 -----------------------------------------------------------------------------
 -- |
@@ -32,18 +25,16 @@ import Foreign.C.Types
 import Foreign.StablePtr
 
 import Data.Char
-import GHC.Arr          ( STArray, unsafeIndex )
+import GHC.Arr          ( STArray )
 import qualified GHC.Arr as Arr
 import qualified GHC.Arr as ArrST
 import GHC.ST           ( ST(..), runST )
 import GHC.Base
-import GHC.Word         ( Word(..) )
 import GHC.Ptr          ( Ptr(..), FunPtr(..), nullPtr, nullFunPtr )
-import GHC.Float        ( Float(..), Double(..) )
 import GHC.Stable       ( StablePtr(..) )
 import GHC.Int          ( Int8(..),  Int16(..),  Int32(..),  Int64(..) )
 import GHC.Word         ( Word8(..), Word16(..), Word32(..), Word64(..) )
-import GHC.IO           ( IO(..), stToIO )
+import GHC.IO           ( stToIO )
 import GHC.IOArray      ( IOArray(..),
                           newIOArray, unsafeReadIOArray, unsafeWriteIOArray )
 import Data.Typeable
@@ -1039,7 +1030,11 @@ instance MArray (STUArray s) Bool (ST s) where
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readWordArray# marr# (bOOL_INDEX i#) s1# of { (# s2#, e# #) ->
+#if __GLASGOW_HASKELL__ > 706
         (# s2#, isTrue# ((e# `and#` bOOL_BIT i#) `neWord#` int2Word# 0#) :: Bool #) }
+#else
+        (# s2#, (e# `and#` bOOL_BIT i# `neWord#` int2Word# 0#) :: Bool #) }
+#endif
     {-# INLINE unsafeWrite #-}
     unsafeWrite (STUArray _ _ _ marr#) (I# i#) e = ST $ \s1# ->
         case bOOL_INDEX i#              of { j# ->

@@ -1,6 +1,5 @@
 {-# LANGUAGE MagicHash, UnliftedFFITypes #-}
-{-# OPTIONS_GHC -#include "HsBase.h" #-}
-{-# OPTIONS_GHC -w #-} --tmp
+
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Array.IO
@@ -41,10 +40,7 @@ import Foreign
 import Foreign.C
 
 import GHC.Exts  (MutableByteArray#, RealWorld)
-import GHC.Arr
-import GHC.IORef
 import GHC.IO.Handle
-import GHC.IO.Buffer
 import GHC.IO.Exception
 
 -- ---------------------------------------------------------------------------
@@ -70,7 +66,7 @@ hGetArray handle (IOUArray (STUArray _l _u n ptr)) count
       -- allocate a separate area of memory and copy.
       allocaBytes count $ \p -> do
         r <- hGetBuf handle p count
-        memcpy_ba_ptr ptr p (fromIntegral r)
+        _ <- memcpy_ba_ptr ptr p (fromIntegral r)
         return r
 
 foreign import ccall unsafe "memcpy"
@@ -93,7 +89,7 @@ hPutArray handle (IOUArray (STUArray _l _u n raw)) count
       -- as in hGetArray, we would like to use the array directly, but
       -- we can't be sure that the MutableByteArray# is pinned.
      allocaBytes count $ \p -> do
-       memcpy_ptr_ba p raw (fromIntegral count)
+       _ <- memcpy_ptr_ba p raw (fromIntegral count)
        hPutBuf handle p count
 
 foreign import ccall unsafe "memcpy"

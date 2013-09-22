@@ -1,6 +1,5 @@
 {-# LANGUAGE Trustworthy #-}
-{-# OPTIONS_GHC -#include "HsBase.h" #-}
-{-# OPTIONS_GHC -w #-} --tmp
+
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Array.IO.Safe
