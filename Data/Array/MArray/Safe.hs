@@ -1,4 +1,4 @@
-{-# LANGUAGE Trustworthy #-}
+{-# LANGUAGE CPP, Trustworthy #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Array.MArray.Safe

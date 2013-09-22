@@ -1,3 +1,4 @@
+{-# LANGUAGE MagicHash, UnliftedFFITypes #-}
 {-# OPTIONS_GHC -#include "HsBase.h" #-}
 {-# OPTIONS_GHC -w #-} --tmp
 -----------------------------------------------------------------------------

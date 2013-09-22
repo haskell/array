@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleInstances, MultiParamTypeClasses #-}
 {-# OPTIONS_HADDOCK hide #-}
 -----------------------------------------------------------------------------
 -- |
@@ -13,7 +14,6 @@
 --
 -----------------------------------------------------------------------------
 
--- #hide
 module Data.Array.Storable.Internals (
     StorableArray(..),
     withStorableArray,

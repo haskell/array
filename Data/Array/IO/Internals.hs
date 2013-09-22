@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses #-}
 {-# OPTIONS_HADDOCK hide #-}
 -----------------------------------------------------------------------------
 -- |
@@ -13,7 +14,6 @@
 --
 -----------------------------------------------------------------------------
 
--- #hide
 module Data.Array.IO.Internals (
     IOArray(..),         -- instance of: Eq, Typeable
     IOUArray(..),        -- instance of: Eq, Typeable

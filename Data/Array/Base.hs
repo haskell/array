@@ -1,4 +1,5 @@
-{-# OPTIONS_GHC -XBangPatterns -fno-warn-unused-imports #-}
+{-# LANGUAGE BangPatterns, CPP, RankNTypes, MagicHash, UnboxedTuples, MultiParamTypeClasses, FlexibleInstances, FlexibleContexts, DeriveDataTypeable, UnliftedFFITypes #-}
+{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 {-# OPTIONS_HADDOCK hide #-}
 -- XXX With a GHC 6.9 we get a spurious
 -- Data/Array/Base.hs:26:0:
@@ -22,7 +23,6 @@
 --
 -----------------------------------------------------------------------------
 
--- #hide
 module Data.Array.Base where
 
 import Control.Monad.ST.Lazy ( strictToLazyST )
