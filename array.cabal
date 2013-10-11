@@ -39,7 +39,7 @@ library
       Trustworthy,
       UnboxedTuples,
       UnliftedFFITypes
-  build-depends: base >= 4.5 && < 5
+  build-depends: base >= 4.5 && < 4.8
   ghc-options: -Wall
   exposed-modules:
       Data.Array

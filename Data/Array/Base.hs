@@ -32,6 +32,9 @@ import GHC.ST           ( ST(..), runST )
 import GHC.Base
 import GHC.Ptr          ( Ptr(..), FunPtr(..), nullPtr, nullFunPtr )
 import GHC.Stable       ( StablePtr(..) )
+#if !MIN_VERSION_base(4,6,0)
+import GHC.Exts         ( Word(..) )
+#endif
 import GHC.Int          ( Int8(..),  Int16(..),  Int32(..),  Int64(..) )
 import GHC.Word         ( Word8(..), Word16(..), Word32(..), Word64(..) )
 import GHC.IO           ( stToIO )
