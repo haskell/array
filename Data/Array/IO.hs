@@ -20,7 +20,6 @@ module Data.Array.IO (
 
     -- * @IO@ arrays with unboxed elements
     IOUArray,            -- instance of: Eq, Typeable
-    castIOUArray,        -- :: IOUArray i a -> IO (IOUArray i b)
 
     -- * Overloaded mutable array interface
     module Data.Array.MArray,
@@ -31,8 +30,7 @@ module Data.Array.IO (
   ) where
 
 import Data.Array.Base
-import Data.Array.IO.Internals hiding ( castIOUArray )
-import qualified Data.Array.Unsafe as U ( castIOUArray )
+import Data.Array.IO.Internals
 import Data.Array.MArray
 import System.IO.Error
 
@@ -103,12 +101,3 @@ illegalBufferSize handle fn sz =
         ioException (ioeSetErrorString
                      (mkIOError InvalidArgument fn (Just handle) Nothing)
                      ("illegal buffer size " ++ showsPrec 9 (sz::Int) []))
-
-{-# DEPRECATED castIOUArray "Please import from Data.Array.Unsafe instead; This will be removed in the next release" #-} -- deprecated in 7.4
--- | Casts an 'IOUArray' with one element type into one with a
--- different element type.  All the elements of the resulting array
--- are undefined (unless you know what you\'re doing...).
-{-# INLINE castIOUArray #-}
-castIOUArray :: IOUArray i a -> IO (IOUArray i b)
-castIOUArray = U.castIOUArray
-

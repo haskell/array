@@ -34,23 +34,7 @@ module Data.Array.Storable (
     withStorableArray,  -- :: StorableArray i e -> (Ptr e -> IO a) -> IO a
 
     touchStorableArray, -- :: StorableArray i e -> IO ()
-
-    unsafeForeignPtrToStorableArray
   ) where
 
-import Foreign hiding (newArray)
-
 import Data.Array.MArray
-import Data.Array.Storable.Internals hiding ( unsafeForeignPtrToStorableArray )
-import qualified Data.Array.Unsafe as U ( unsafeForeignPtrToStorableArray )
-
-{-# DEPRECATED unsafeForeignPtrToStorableArray "Please import from Data.Array.Unsafe instead; This will be removed in the next release" #-} -- deprecated in 7.4
-
--- |Construct a 'StorableArray' from an arbitrary 'ForeignPtr'.  It is
--- the caller's responsibility to ensure that the 'ForeignPtr' points to
--- an area of memory sufficient for the specified bounds.
-{-# INLINE unsafeForeignPtrToStorableArray #-}
-unsafeForeignPtrToStorableArray
-   :: Ix i => ForeignPtr e -> (i,i) -> IO (StorableArray i e)
-unsafeForeignPtrToStorableArray = U.unsafeForeignPtrToStorableArray
-
+import Data.Array.Storable.Internals
