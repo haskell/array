@@ -13,6 +13,7 @@ description:
     some instances of these classes.
 cabal-version: >=1.10
 build-type: Simple
+tested-with: GHC==7.6.3, GHC==7.6.2, GHC==7.6.1, GHC==7.4.2, GHC==7.4.1
 
 extra-source-files: changelog
 
