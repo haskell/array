@@ -461,7 +461,7 @@ cmpIntUArray arr1@(UArray l1 u1 n1 _) arr2@(UArray l2 u2 n2 _) =
     if n1 == 0 then if n2 == 0 then EQ else LT else
     if n2 == 0 then GT else
     case compare l1 l2 of
-        EQ    -> foldr cmp (compare u1 u2) [0 .. (n1 `min` n2) - 1]
+        EQ    -> GHC.Base.foldr cmp (compare u1 u2) [0 .. (n1 `min` n2) - 1]
         other -> other
     where
     cmp i rest = case compare (unsafeAt arr1 i) (unsafeAt arr2 i) of
