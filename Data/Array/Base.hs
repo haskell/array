@@ -29,8 +29,9 @@ import GHC.Arr          ( STArray )
 import qualified GHC.Arr as Arr
 import qualified GHC.Arr as ArrST
 import GHC.ST           ( ST(..), runST )
-import GHC.Base
-import GHC.Ptr          ( Ptr(..), FunPtr(..), nullPtr, nullFunPtr )
+import GHC.Base         ( IO(..) )
+import GHC.Exts
+import GHC.Ptr          ( nullPtr, nullFunPtr )
 import GHC.Stable       ( StablePtr(..) )
 #if !MIN_VERSION_base(4,6,0)
 import GHC.Exts         ( Word(..) )
@@ -461,7 +462,7 @@ cmpIntUArray arr1@(UArray l1 u1 n1 _) arr2@(UArray l2 u2 n2 _) =
     if n1 == 0 then if n2 == 0 then EQ else LT else
     if n2 == 0 then GT else
     case compare l1 l2 of
-        EQ    -> GHC.Base.foldr cmp (compare u1 u2) [0 .. (n1 `min` n2) - 1]
+        EQ    -> foldr cmp (compare u1 u2) [0 .. (n1 `min` n2) - 1]
         other -> other
     where
     cmp i rest = case compare (unsafeAt arr1 i) (unsafeAt arr2 i) of
