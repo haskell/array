@@ -3,6 +3,7 @@
 *.hi
 *.comp.std*
 *.run.std*
+*.normalised
 *.eventlog
 *.genscript
 *.exe
