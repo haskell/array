@@ -1,4 +1,7 @@
 {-# LANGUAGE BangPatterns, CPP, RankNTypes, MagicHash, UnboxedTuples, MultiParamTypeClasses, FlexibleInstances, FlexibleContexts, DeriveDataTypeable, UnliftedFFITypes #-}
+#if __GLASGOW_HASKELL__ >= 708
+{-# LANGUAGE RoleAnnotations #-}
+#endif
 {-# OPTIONS_HADDOCK hide #-}
 
 -----------------------------------------------------------------------------
@@ -402,6 +405,10 @@ instance IArray Arr.Array e where
 --
 data UArray i e = UArray !i !i !Int ByteArray#
                   deriving Typeable
+#if __GLASGOW_HASKELL__ >= 708
+-- There are class-based invariants on both parameters. See also #9220.
+type role UArray nominal nominal
+#endif
 
 {-# INLINE unsafeArrayUArray #-}
 unsafeArrayUArray :: (MArray (STUArray s) e (ST s), Ix i)
@@ -985,6 +992,11 @@ instance MArray (STArray s) e (Lazy.ST s) where
 -- 'STArray' provides.
 data STUArray s i e = STUArray !i !i !Int (MutableByteArray# s)
                       deriving Typeable
+#if __GLASGOW_HASKELL__ >= 708
+-- The "ST" parameter must be nominal for the safety of the ST trick.
+-- The other parameters have class constraints. See also #9220.
+type role STUArray nominal nominal nominal
+#endif
 
 instance Eq (STUArray s i e) where
     STUArray _ _ _ arr1# == STUArray _ _ _ arr2# =
