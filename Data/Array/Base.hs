@@ -1390,7 +1390,7 @@ freeze marr = do
   -- use the safe array creation function here.
   return (listArray (l,u) es)
 
-freezeSTUArray :: Ix i => STUArray s i e -> ST s (UArray i e)
+freezeSTUArray :: STUArray s i e -> ST s (UArray i e)
 freezeSTUArray (STUArray l u n marr#) = ST $ \s1# ->
     case sizeofMutableByteArray# marr#  of { n# ->
     case newByteArray# n# s1#           of { (# s2#, marr'# #) ->
@@ -1465,7 +1465,7 @@ thaw arr = case bounds arr of
               | i <- [0 .. n - 1]]
     return marr
 
-thawSTUArray :: Ix i => UArray i e -> ST s (STUArray s i e)
+thawSTUArray :: UArray i e -> ST s (STUArray s i e)
 thawSTUArray (UArray l u n arr#) = ST $ \s1# ->
     case sizeofByteArray# arr#          of { n# ->
     case newByteArray# n# s1#           of { (# s2#, marr# #) ->
@@ -1525,7 +1525,7 @@ unsafeThaw :: (Ix i, IArray a e, MArray b e m) => a i e -> m (b i e)
 unsafeThaw = thaw
 
 {-# INLINE unsafeThawSTUArray #-}
-unsafeThawSTUArray :: Ix i => UArray i e -> ST s (STUArray s i e)
+unsafeThawSTUArray :: UArray i e -> ST s (STUArray s i e)
 unsafeThawSTUArray (UArray l u n marr#) =
     return (STUArray l u n (unsafeCoerce# marr#))
 
@@ -1535,7 +1535,7 @@ unsafeThawSTUArray (UArray l u n marr#) =
     #-}
 
 {-# INLINE unsafeThawIOArray #-}
-unsafeThawIOArray :: Ix ix => Arr.Array ix e -> IO (IOArray ix e)
+unsafeThawIOArray :: Arr.Array ix e -> IO (IOArray ix e)
 unsafeThawIOArray arr = stToIO $ do
     marr <- ArrST.unsafeThawSTArray arr
     return (IOArray marr)
@@ -1544,7 +1544,7 @@ unsafeThawIOArray arr = stToIO $ do
 "unsafeThaw/IOArray"  unsafeThaw = unsafeThawIOArray
     #-}
 
-thawIOArray :: Ix ix => Arr.Array ix e -> IO (IOArray ix e)
+thawIOArray :: Arr.Array ix e -> IO (IOArray ix e)
 thawIOArray arr = stToIO $ do
     marr <- ArrST.thawSTArray arr
     return (IOArray marr)
@@ -1553,7 +1553,7 @@ thawIOArray arr = stToIO $ do
 "thaw/IOArray"  thaw = thawIOArray
     #-}
 
-freezeIOArray :: Ix ix => IOArray ix e -> IO (Arr.Array ix e)
+freezeIOArray :: IOArray ix e -> IO (Arr.Array ix e)
 freezeIOArray (IOArray marr) = stToIO (ArrST.freezeSTArray marr)
 
 {-# RULES
@@ -1561,7 +1561,7 @@ freezeIOArray (IOArray marr) = stToIO (ArrST.freezeSTArray marr)
     #-}
 
 {-# INLINE unsafeFreezeIOArray #-}
-unsafeFreezeIOArray :: Ix ix => IOArray ix e -> IO (Arr.Array ix e)
+unsafeFreezeIOArray :: IOArray ix e -> IO (Arr.Array ix e)
 unsafeFreezeIOArray (IOArray marr) = stToIO (ArrST.unsafeFreezeSTArray marr)
 
 {-# RULES

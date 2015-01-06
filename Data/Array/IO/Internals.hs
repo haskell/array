@@ -375,7 +375,7 @@ castIOUArray (IOUArray marr) = stToIO $ do
     return (IOUArray marr')
 
 {-# INLINE unsafeThawIOUArray #-}
-unsafeThawIOUArray :: Ix ix => UArray ix e -> IO (IOUArray ix e)
+unsafeThawIOUArray :: UArray ix e -> IO (IOUArray ix e)
 unsafeThawIOUArray arr = stToIO $ do
     marr <- unsafeThawSTUArray arr
     return (IOUArray marr)
@@ -384,7 +384,7 @@ unsafeThawIOUArray arr = stToIO $ do
 "unsafeThaw/IOUArray" unsafeThaw = unsafeThawIOUArray
     #-}
 
-thawIOUArray :: Ix ix => UArray ix e -> IO (IOUArray ix e)
+thawIOUArray :: UArray ix e -> IO (IOUArray ix e)
 thawIOUArray arr = stToIO $ do
     marr <- thawSTUArray arr
     return (IOUArray marr)
@@ -394,14 +394,14 @@ thawIOUArray arr = stToIO $ do
     #-}
 
 {-# INLINE unsafeFreezeIOUArray #-}
-unsafeFreezeIOUArray :: Ix ix => IOUArray ix e -> IO (UArray ix e)
+unsafeFreezeIOUArray :: IOUArray ix e -> IO (UArray ix e)
 unsafeFreezeIOUArray (IOUArray marr) = stToIO (unsafeFreezeSTUArray marr)
 
 {-# RULES
 "unsafeFreeze/IOUArray" unsafeFreeze = unsafeFreezeIOUArray
     #-}
 
-freezeIOUArray :: Ix ix => IOUArray ix e -> IO (UArray ix e)
+freezeIOUArray :: IOUArray ix e -> IO (UArray ix e)
 freezeIOUArray (IOUArray marr) = stToIO (freezeSTUArray marr)
 
 {-# RULES
