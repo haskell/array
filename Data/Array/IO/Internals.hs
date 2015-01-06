@@ -34,7 +34,6 @@ import Control.Monad.ST         ( RealWorld, stToIO )
 import Foreign.Ptr              ( Ptr, FunPtr )
 import Foreign.StablePtr        ( StablePtr )
 
-import Data.Ix
 import Data.Array.Base
 
 import GHC.IOArray (IOArray(..))
