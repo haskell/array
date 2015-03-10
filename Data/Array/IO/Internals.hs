@@ -34,6 +34,9 @@ import Control.Monad.ST         ( RealWorld, stToIO )
 import Foreign.Ptr              ( Ptr, FunPtr )
 import Foreign.StablePtr        ( StablePtr )
 
+#if __GLASGOW_HASKELL__ < 711
+import Data.Ix
+#endif
 import Data.Array.Base
 
 import GHC.IOArray (IOArray(..))
@@ -374,7 +377,11 @@ castIOUArray (IOUArray marr) = stToIO $ do
     return (IOUArray marr')
 
 {-# INLINE unsafeThawIOUArray #-}
+#if __GLASGOW_HASKELL__ >= 711
 unsafeThawIOUArray :: UArray ix e -> IO (IOUArray ix e)
+#else
+unsafeThawIOUArray :: Ix ix => UArray ix e -> IO (IOUArray ix e)
+#endif
 unsafeThawIOUArray arr = stToIO $ do
     marr <- unsafeThawSTUArray arr
     return (IOUArray marr)
@@ -383,7 +390,11 @@ unsafeThawIOUArray arr = stToIO $ do
 "unsafeThaw/IOUArray" unsafeThaw = unsafeThawIOUArray
     #-}
 
+#if __GLASGOW_HASKELL__ >= 711
 thawIOUArray :: UArray ix e -> IO (IOUArray ix e)
+#else
+thawIOUArray :: Ix ix => UArray ix e -> IO (IOUArray ix e)
+#endif
 thawIOUArray arr = stToIO $ do
     marr <- thawSTUArray arr
     return (IOUArray marr)
@@ -393,14 +404,22 @@ thawIOUArray arr = stToIO $ do
     #-}
 
 {-# INLINE unsafeFreezeIOUArray #-}
+#if __GLASGOW_HASKELL__ >= 711
 unsafeFreezeIOUArray :: IOUArray ix e -> IO (UArray ix e)
+#else
+unsafeFreezeIOUArray :: Ix ix => IOUArray ix e -> IO (UArray ix e)
+#endif
 unsafeFreezeIOUArray (IOUArray marr) = stToIO (unsafeFreezeSTUArray marr)
 
 {-# RULES
 "unsafeFreeze/IOUArray" unsafeFreeze = unsafeFreezeIOUArray
     #-}
 
+#if __GLASGOW_HASKELL__ >= 711
 freezeIOUArray :: IOUArray ix e -> IO (UArray ix e)
+#else
+freezeIOUArray :: Ix ix => IOUArray ix e -> IO (UArray ix e)
+#endif
 freezeIOUArray (IOUArray marr) = stToIO (freezeSTUArray marr)
 
 {-# RULES

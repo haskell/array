@@ -1390,7 +1390,11 @@ freeze marr = do
   -- use the safe array creation function here.
   return (listArray (l,u) es)
 
+#if __GLASGOW_HASKELL__ >= 711
 freezeSTUArray :: STUArray s i e -> ST s (UArray i e)
+#else
+freezeSTUArray :: Ix i => STUArray s i e -> ST s (UArray i e)
+#endif
 freezeSTUArray (STUArray l u n marr#) = ST $ \s1# ->
     case sizeofMutableByteArray# marr#  of { n# ->
     case newByteArray# n# s1#           of { (# s2#, marr'# #) ->
@@ -1465,7 +1469,11 @@ thaw arr = case bounds arr of
               | i <- [0 .. n - 1]]
     return marr
 
+#if __GLASGOW_HASKELL__ >= 711
 thawSTUArray :: UArray i e -> ST s (STUArray s i e)
+#else
+thawSTUArray :: Ix i => UArray i e -> ST s (STUArray s i e)
+#endif
 thawSTUArray (UArray l u n arr#) = ST $ \s1# ->
     case sizeofByteArray# arr#          of { n# ->
     case newByteArray# n# s1#           of { (# s2#, marr# #) ->
@@ -1525,7 +1533,11 @@ unsafeThaw :: (Ix i, IArray a e, MArray b e m) => a i e -> m (b i e)
 unsafeThaw = thaw
 
 {-# INLINE unsafeThawSTUArray #-}
+#if __GLASGOW_HASKELL__ >= 711
 unsafeThawSTUArray :: UArray i e -> ST s (STUArray s i e)
+#else
+unsafeThawSTUArray :: Ix i => UArray i e -> ST s (STUArray s i e)
+#endif
 unsafeThawSTUArray (UArray l u n marr#) =
     return (STUArray l u n (unsafeCoerce# marr#))
 
@@ -1535,7 +1547,11 @@ unsafeThawSTUArray (UArray l u n marr#) =
     #-}
 
 {-# INLINE unsafeThawIOArray #-}
+#if __GLASGOW_HASKELL__ >= 711
 unsafeThawIOArray :: Arr.Array ix e -> IO (IOArray ix e)
+#else
+unsafeThawIOArray :: Ix ix => Arr.Array ix e -> IO (IOArray ix e)
+#endif
 unsafeThawIOArray arr = stToIO $ do
     marr <- ArrST.unsafeThawSTArray arr
     return (IOArray marr)
@@ -1544,7 +1560,11 @@ unsafeThawIOArray arr = stToIO $ do
 "unsafeThaw/IOArray"  unsafeThaw = unsafeThawIOArray
     #-}
 
+#if __GLASGOW_HASKELL__ >= 711
 thawIOArray :: Arr.Array ix e -> IO (IOArray ix e)
+#else
+thawIOArray :: Ix ix => Arr.Array ix e -> IO (IOArray ix e)
+#endif
 thawIOArray arr = stToIO $ do
     marr <- ArrST.thawSTArray arr
     return (IOArray marr)
@@ -1553,7 +1573,11 @@ thawIOArray arr = stToIO $ do
 "thaw/IOArray"  thaw = thawIOArray
     #-}
 
+#if __GLASGOW_HASKELL__ >= 711
 freezeIOArray :: IOArray ix e -> IO (Arr.Array ix e)
+#else
+freezeIOArray :: Ix ix => IOArray ix e -> IO (Arr.Array ix e)
+#endif
 freezeIOArray (IOArray marr) = stToIO (ArrST.freezeSTArray marr)
 
 {-# RULES
@@ -1561,7 +1585,11 @@ freezeIOArray (IOArray marr) = stToIO (ArrST.freezeSTArray marr)
     #-}
 
 {-# INLINE unsafeFreezeIOArray #-}
+#if __GLASGOW_HASKELL__ >= 711
 unsafeFreezeIOArray :: IOArray ix e -> IO (Arr.Array ix e)
+#else
+unsafeFreezeIOArray :: Ix ix => IOArray ix e -> IO (Arr.Array ix e)
+#endif
 unsafeFreezeIOArray (IOArray marr) = stToIO (ArrST.unsafeFreezeSTArray marr)
 
 {-# RULES
