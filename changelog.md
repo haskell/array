@@ -1,8 +1,9 @@
 # Changelog for [`array` package](http://hackage.haskell.org/package/array)
 
-## 0.5.0.1  *TBA*
+## 0.5.1.0  *Mar 2015*
 
   * Bundled with GHC 7.10.1
+  * Add role annotations for GHC >= 7.8 (#9220)
 
 ## 0.5.0.0  *Nov 2013*
 
