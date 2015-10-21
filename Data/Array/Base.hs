@@ -278,8 +278,7 @@ indices arr = case bounds arr of (l,u) -> range (l,u)
 -- | Returns a list of all the elements of an array, in the same order
 -- as their indices.
 elems :: (IArray a e, Ix i) => a i e -> [e]
-elems arr = case bounds arr of
-    (_l, _u) -> [unsafeAt arr i | i <- [0 .. numElements arr - 1]]
+elems arr = [unsafeAt arr i | i <- [0 .. numElements arr - 1]]
 
 {-# INLINE assocs #-}
 -- | Returns the contents of an array as a list of associations.
