@@ -1,6 +1,2 @@
 Ix{Int}.index: Index (5) out of range ((1,4))
-CallStack (from ImplicitParams):
-  error, called at libraries/base/GHC/Arr.hs:176:5 in base:GHC.Arr
 Error in array index
-CallStack (from ImplicitParams):
-  error, called at libraries/base/GHC/Arr.hs:182:22 in base:GHC.Arr
