@@ -1,5 +1,11 @@
 # Changelog for [`array` package](http://hackage.haskell.org/package/array)
 
+## 0.5.1.1  *Apr 2016*
+
+  * Bundled with GHC 8.0.1
+  * Use `@since` syntax in Haddock comments
+  * Don't needlessly call `bounds` in `Data.Array.Base.elems` (#10014)
+
 ## 0.5.1.0  *Mar 2015*
 
   * Bundled with GHC 7.10.1
