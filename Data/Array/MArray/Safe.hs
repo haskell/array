@@ -15,7 +15,7 @@
 -- .
 -- Safe API only of "Data.Array.MArray".
 --
--- /Since: 0.4.0.0/
+-- @since 0.4.0.0
 -----------------------------------------------------------------------------
 
 module Data.Array.MArray.Safe (

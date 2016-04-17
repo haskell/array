@@ -15,7 +15,7 @@
 --
 -- Actual implementation of "Data.Array.Storable".
 --
--- /Since: 0.4.0.0/
+-- @since 0.4.0.0
 -----------------------------------------------------------------------------
 
 module Data.Array.Storable.Internals (
