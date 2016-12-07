@@ -1065,7 +1065,7 @@ instance MArray (STUArray s) Char (ST s) where
     {-# INLINE getNumElements #-}
     getNumElements (STUArray _ _ n _) = return n
     {-# INLINE unsafeNewArray_ #-}
-    unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (*# 4#)
+    unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (safe_scale 4#)
     {-# INLINE newArray_ #-}
     newArray_ arrBounds = newArray arrBounds (chr 0)
     {-# INLINE unsafeRead #-}
@@ -1227,7 +1227,7 @@ instance MArray (STUArray s) Int16 (ST s) where
     {-# INLINE getNumElements #-}
     getNumElements (STUArray _ _ n _) = return n
     {-# INLINE unsafeNewArray_ #-}
-    unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (*# 2#)
+    unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (safe_scale 2#)
     {-# INLINE newArray_ #-}
     newArray_ arrBounds = newArray arrBounds 0
     {-# INLINE unsafeRead #-}
@@ -1245,7 +1245,7 @@ instance MArray (STUArray s) Int32 (ST s) where
     {-# INLINE getNumElements #-}
     getNumElements (STUArray _ _ n _) = return n
     {-# INLINE unsafeNewArray_ #-}
-    unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (*# 4#)
+    unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (safe_scale 4#)
     {-# INLINE newArray_ #-}
     newArray_ arrBounds = newArray arrBounds 0
     {-# INLINE unsafeRead #-}
@@ -1263,7 +1263,7 @@ instance MArray (STUArray s) Int64 (ST s) where
     {-# INLINE getNumElements #-}
     getNumElements (STUArray _ _ n _) = return n
     {-# INLINE unsafeNewArray_ #-}
-    unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (*# 8#)
+    unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (safe_scale 8#)
     {-# INLINE newArray_ #-}
     newArray_ arrBounds = newArray arrBounds 0
     {-# INLINE unsafeRead #-}
@@ -1299,7 +1299,7 @@ instance MArray (STUArray s) Word16 (ST s) where
     {-# INLINE getNumElements #-}
     getNumElements (STUArray _ _ n _) = return n
     {-# INLINE unsafeNewArray_ #-}
-    unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (*# 2#)
+    unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (safe_scale 2#)
     {-# INLINE newArray_ #-}
     newArray_ arrBounds = newArray arrBounds 0
     {-# INLINE unsafeRead #-}
@@ -1317,7 +1317,7 @@ instance MArray (STUArray s) Word32 (ST s) where
     {-# INLINE getNumElements #-}
     getNumElements (STUArray _ _ n _) = return n
     {-# INLINE unsafeNewArray_ #-}
-    unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (*# 4#)
+    unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (safe_scale 4#)
     {-# INLINE newArray_ #-}
     newArray_ arrBounds = newArray arrBounds 0
     {-# INLINE unsafeRead #-}
@@ -1335,7 +1335,7 @@ instance MArray (STUArray s) Word64 (ST s) where
     {-# INLINE getNumElements #-}
     getNumElements (STUArray _ _ n _) = return n
     {-# INLINE unsafeNewArray_ #-}
-    unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (*# 8#)
+    unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) (safe_scale 8#)
     {-# INLINE newArray_ #-}
     newArray_ arrBounds = newArray arrBounds 0
     {-# INLINE unsafeRead #-}
@@ -1352,13 +1352,29 @@ instance MArray (STUArray s) Word64 (ST s) where
 
 bOOL_SCALE, bOOL_WORD_SCALE,
   wORD_SCALE, dOUBLE_SCALE, fLOAT_SCALE :: Int# -> Int#
-bOOL_SCALE n# = (n# +# last#) `uncheckedIShiftRA#` 3#
-  where !(I# last#) = SIZEOF_HSWORD * 8 - 1
-bOOL_WORD_SCALE n# = bOOL_INDEX (n# +# last#)
-  where !(I# last#) = SIZEOF_HSWORD * 8 - 1
-wORD_SCALE   n# = scale# *# n# where !(I# scale#) = SIZEOF_HSWORD
-dOUBLE_SCALE n# = scale# *# n# where !(I# scale#) = SIZEOF_HSDOUBLE
-fLOAT_SCALE  n# = scale# *# n# where !(I# scale#) = SIZEOF_HSFLOAT
+bOOL_SCALE n#
+  | isTrue# (res# ># n#) = res#
+  | otherwise = error "Data.Array.Base.bOOL_SCALE: Overflow"
+  where
+    !(I# last#) = SIZEOF_HSWORD * 8 - 1
+    !res# = (n# +# last#) `uncheckedIShiftRA#` 3#
+bOOL_WORD_SCALE n#
+  | isTrue# (res# ># n#) = res#
+  | otherwise = error "Data.Array.Base.bOOL_WORD_SCALE: Overflow"
+  where
+    !(I# last#) = SIZEOF_HSWORD * 8 - 1
+    !res# = bOOL_INDEX (n# +# last#)
+wORD_SCALE   n# = safe_scale scale# n# where !(I# scale#) = SIZEOF_HSWORD
+dOUBLE_SCALE n# = safe_scale scale# n# where !(I# scale#) = SIZEOF_HSDOUBLE
+fLOAT_SCALE  n# = safe_scale scale# n# where !(I# scale#) = SIZEOF_HSFLOAT
+
+safe_scale :: Int# -> Int# -> Int#
+safe_scale scale# n#
+  | isTrue# (res# >=# n#) = res#
+  | otherwise = error "Data.Array.Base.safe_scale: Overflow"
+  where
+    !res# = scale# *# n#
+
 
 bOOL_INDEX :: Int# -> Int#
 #if SIZEOF_HSWORD == 4
