@@ -1,5 +1,10 @@
 # Changelog for [`array` package](http://hackage.haskell.org/package/array)
 
+## 0.5.1.2  *TBD*
+
+  * Bundled with GHC 8.2.1
+  * Overflow check in `unsafeNewArray`
+
 ## 0.5.1.1  *Apr 2016*
 
   * Bundled with GHC 8.0.1
