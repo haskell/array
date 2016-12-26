@@ -32,7 +32,7 @@ import GHC.Arr          ( STArray )
 import qualified GHC.Arr as Arr
 import qualified GHC.Arr as ArrST
 import GHC.ST           ( ST(..), runST )
-import GHC.Base         ( IO(..) )
+import GHC.Base         ( IO(..), divInt# )
 import GHC.Exts
 import GHC.Ptr          ( nullPtr, nullFunPtr )
 import GHC.Stable       ( StablePtr(..) )
@@ -1370,10 +1370,12 @@ fLOAT_SCALE  n# = safe_scale scale# n# where !(I# scale#) = SIZEOF_HSFLOAT
 
 safe_scale :: Int# -> Int# -> Int#
 safe_scale scale# n#
-  | isTrue# (res# >=# n#) = res#
-  | otherwise = error "Data.Array.Base.safe_scale: Overflow"
+  | not overflow = res#
+  | otherwise    = error "Data.Array.Base.safe_scale: Overflow"
   where
     !res# = scale# *# n#
+    !overflow = isTrue# (maxN# `divInt#` scale# <# n#)
+    !(I# maxN#) = maxBound
 
 
 bOOL_INDEX :: Int# -> Int#
