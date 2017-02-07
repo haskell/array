@@ -1354,13 +1354,15 @@ bOOL_SCALE, bOOL_WORD_SCALE,
   wORD_SCALE, dOUBLE_SCALE, fLOAT_SCALE :: Int# -> Int#
 bOOL_SCALE n#
   | isTrue# (res# ># n#) = res#
-  | otherwise = error "Data.Array.Base.bOOL_SCALE: Overflow"
+  | otherwise = error $ "Data.Array.Base.bOOL_SCALE: Overflow; n: "
+    ++ show (I# n#) ++ ", res: " ++ show (I# n#)
   where
     !(I# last#) = SIZEOF_HSWORD * 8 - 1
     !res# = (n# +# last#) `uncheckedIShiftRA#` 3#
 bOOL_WORD_SCALE n#
   | isTrue# (res# ># n#) = res#
-  | otherwise = error "Data.Array.Base.bOOL_WORD_SCALE: Overflow"
+  | otherwise = error $ "Data.Array.Base.bOOL_WORD_SCALE: Overflow; n: "
+    ++ show (I# n#) ++ ", res: " ++ show (I# n#)
   where
     !(I# last#) = SIZEOF_HSWORD * 8 - 1
     !res# = bOOL_INDEX (n# +# last#)
@@ -1371,7 +1373,8 @@ fLOAT_SCALE  n# = safe_scale scale# n# where !(I# scale#) = SIZEOF_HSFLOAT
 safe_scale :: Int# -> Int# -> Int#
 safe_scale scale# n#
   | not overflow = res#
-  | otherwise    = error "Data.Array.Base.safe_scale: Overflow"
+  | otherwise    = error $ "Data.Array.Base.safe_scale: Overflow; scale: "
+    ++ show (I# scale#) ++ ", n: " ++ show (I# n#)
   where
     !res# = scale# *# n#
     !overflow = isTrue# (maxN# `divInt#` scale# <# n#)
