@@ -1023,21 +1023,13 @@ instance MArray (STUArray s) Bool (ST s) where
     getNumElements (STUArray _ _ n _) = return n
     {-# INLINE newArray #-}
     newArray (l,u) initialValue = ST $ \s1# ->
-        case safeRangeSize (l,u)            of { n@(I# n#) ->
-        case newByteArray# (bOOL_SCALE n#) s1# of { (# s2#, marr# #) ->
-        case bOOL_WORD_SCALE n#         of { n'# ->
-#if __GLASGOW_HASKELL__ > 706
-        let loop i# s3# | isTrue# (i# ==# n'#) = s3#
-#else
-        let loop i# s3# | i# ==# n'#           = s3#
-#endif
-                        | otherwise            =
-                case writeWordArray# marr# i# e# s3# of { s4# ->
-                loop (i# +# 1#) s4# } in
-        case loop 0# s2#                of { s3# ->
+        case safeRangeSize (l,u)                   of { n@(I# n#) ->
+        case bOOL_SCALE n#                         of { nbytes# ->
+        case newByteArray# nbytes# s1#             of { (# s2#, marr# #) ->
+        case setByteArray# marr# 0# nbytes# e# s2# of { s3# ->
         (# s3#, STUArray l u n marr# #) }}}}
       where
-        !(W# e#) = if initialValue then maxBound else 0
+        !(I# e#) = if initialValue then 0xff else 0x0
     {-# INLINE unsafeNewArray_ #-}
     unsafeNewArray_ (l,u) = unsafeNewArraySTUArray_ (l,u) bOOL_SCALE
     {-# INLINE newArray_ #-}
@@ -1350,22 +1342,10 @@ instance MArray (STUArray s) Word64 (ST s) where
 -----------------------------------------------------------------------------
 -- Translation between elements and bytes
 
-bOOL_SCALE, bOOL_WORD_SCALE,
-  wORD_SCALE, dOUBLE_SCALE, fLOAT_SCALE :: Int# -> Int#
-bOOL_SCALE n#
-  | isTrue# (res# ># n#) = res#
-  | otherwise = error $ "Data.Array.Base.bOOL_SCALE: Overflow; n: "
-    ++ show (I# n#) ++ ", res: " ++ show (I# n#)
-  where
-    !(I# last#) = SIZEOF_HSWORD * 8 - 1
-    !res# = (n# +# last#) `uncheckedIShiftRA#` 3#
-bOOL_WORD_SCALE n#
-  | isTrue# (res# ># n#) = res#
-  | otherwise = error $ "Data.Array.Base.bOOL_WORD_SCALE: Overflow; n: "
-    ++ show (I# n#) ++ ", res: " ++ show (I# n#)
-  where
-    !(I# last#) = SIZEOF_HSWORD * 8 - 1
-    !res# = bOOL_INDEX (n# +# last#)
+bOOL_SCALE, wORD_SCALE, dOUBLE_SCALE, fLOAT_SCALE :: Int# -> Int#
+bOOL_SCALE n# =
+    -- + 7 to handle case where n is not divisible by 8
+    (n# +# 7#) `uncheckedIShiftRA#` 3#
 wORD_SCALE   n# = safe_scale scale# n# where !(I# scale#) = SIZEOF_HSWORD
 dOUBLE_SCALE n# = safe_scale scale# n# where !(I# scale#) = SIZEOF_HSDOUBLE
 fLOAT_SCALE  n# = safe_scale scale# n# where !(I# scale#) = SIZEOF_HSFLOAT
@@ -1379,8 +1359,9 @@ safe_scale scale# n#
     !res# = scale# *# n#
     !overflow = isTrue# (maxN# `divInt#` scale# <# n#)
     !(I# maxN#) = maxBound
+{-# INLINE safe_scale #-}
 
-
+-- | The index of the word which the given @Bool@ array elements falls within.
 bOOL_INDEX :: Int# -> Int#
 #if SIZEOF_HSWORD == 4
 bOOL_INDEX i# = i# `uncheckedIShiftRA#` 5#
