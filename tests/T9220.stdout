@@ -5,10 +5,6 @@ data Data.Array.Base.UArray i e
                            {-# UNPACK #-}Int
                            GHC.Prim.ByteArray#
   	-- Defined in ‘Data.Array.Base’
-instance (GHC.Arr.Ix ix, Show ix, Show e,
-          Data.Array.Base.IArray Data.Array.Base.UArray e) =>
-         Show (Data.Array.Base.UArray ix e)
-  -- Defined in ‘Data.Array.Base’
 instance (GHC.Arr.Ix ix, Eq e,
           Data.Array.Base.IArray Data.Array.Base.UArray e) =>
          Eq (Data.Array.Base.UArray ix e)
@@ -16,6 +12,10 @@ instance (GHC.Arr.Ix ix, Eq e,
 instance (GHC.Arr.Ix ix, Ord e,
           Data.Array.Base.IArray Data.Array.Base.UArray e) =>
          Ord (Data.Array.Base.UArray ix e)
+  -- Defined in ‘Data.Array.Base’
+instance (GHC.Arr.Ix ix, Show ix, Show e,
+          Data.Array.Base.IArray Data.Array.Base.UArray e) =>
+         Show (Data.Array.Base.UArray ix e)
   -- Defined in ‘Data.Array.Base’
 type role Data.Array.IO.Internals.IOUArray nominal nominal
 newtype Data.Array.IO.Internals.IOUArray i e
