@@ -1,3 +1,5 @@
+{-# LANGUAGE CPP #-}
+
 import Data.Array.MArray
 import Data.Array.IO
 import Data.Word
