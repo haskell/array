@@ -5,5 +5,5 @@ test('array001', [
   ],
   compile_and_run, [''])
 
-test('T9220', normal, ghci_script, ['T9220.script'])
+test('T9220', filter_stdout_lines('.*type role .*'), ghci_script, ['T9220.script'])
 test('T229', [exit_code(1)], compile_and_run, [''])
