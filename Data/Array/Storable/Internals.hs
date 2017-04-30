@@ -1,7 +1,4 @@
-{-# LANGUAGE FlexibleInstances, MultiParamTypeClasses, CPP #-}
-#if __GLASGOW_HASKELL__ >= 708
-{-# LANGUAGE RoleAnnotations #-}
-#endif
+{-# LANGUAGE FlexibleInstances, MultiParamTypeClasses, RoleAnnotations #-}
 {-# OPTIONS_HADDOCK hide #-}
 -----------------------------------------------------------------------------
 -- |
@@ -31,10 +28,8 @@ import Foreign hiding (newArray)
 
 -- |The array type
 data StorableArray i e = StorableArray !i !i Int !(ForeignPtr e)
-#if __GLASGOW_HASKELL__ >= 708
 -- Both parameters have class-based invariants. See also #9220.
 type role StorableArray nominal nominal
-#endif
 
 instance Storable e => MArray StorableArray e IO where
     getBounds (StorableArray l u _ _) = return (l,u)

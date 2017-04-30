@@ -1,7 +1,5 @@
 {-# LANGUAGE BangPatterns, CPP, RankNTypes, MagicHash, UnboxedTuples, MultiParamTypeClasses, FlexibleInstances, FlexibleContexts, DeriveDataTypeable, UnliftedFFITypes #-}
-#if __GLASGOW_HASKELL__ >= 708
 {-# LANGUAGE RoleAnnotations #-}
-#endif
 {-# OPTIONS_HADDOCK hide #-}
 
 -----------------------------------------------------------------------------
@@ -36,9 +34,6 @@ import GHC.Base         ( IO(..), divInt# )
 import GHC.Exts
 import GHC.Ptr          ( nullPtr, nullFunPtr )
 import GHC.Stable       ( StablePtr(..) )
-#if !MIN_VERSION_base(4,6,0)
-import GHC.Exts         ( Word(..) )
-#endif
 import GHC.Int          ( Int8(..),  Int16(..),  Int32(..),  Int64(..) )
 import GHC.Word         ( Word8(..), Word16(..), Word32(..), Word64(..) )
 import GHC.IO           ( stToIO )
@@ -404,10 +399,8 @@ instance IArray Arr.Array e where
 --
 data UArray i e = UArray !i !i !Int ByteArray#
                   deriving Typeable
-#if __GLASGOW_HASKELL__ >= 708
 -- There are class-based invariants on both parameters. See also #9220.
 type role UArray nominal nominal
-#endif
 
 {-# INLINE unsafeArrayUArray #-}
 unsafeArrayUArray :: (MArray (STUArray s) e (ST s), Ix i)
@@ -504,11 +497,7 @@ instance IArray UArray Bool where
     {-# INLINE unsafeArray #-}
     unsafeArray lu ies = runST (unsafeArrayUArray lu ies False)
     {-# INLINE unsafeAt #-}
-#if __GLASGOW_HASKELL__ > 706
     unsafeAt (UArray _ _ _ arr#) (I# i#) = isTrue#
-#else
-    unsafeAt (UArray _ _ _ arr#) (I# i#) =
-#endif
         ((indexWordArray# arr# (bOOL_INDEX i#) `and#` bOOL_BIT i#)
         `neWord#` int2Word# 0#)
 
@@ -991,19 +980,13 @@ instance MArray (STArray s) e (Lazy.ST s) where
 -- 'STArray' provides.
 data STUArray s i e = STUArray !i !i !Int (MutableByteArray# s)
                       deriving Typeable
-#if __GLASGOW_HASKELL__ >= 708
 -- The "ST" parameter must be nominal for the safety of the ST trick.
 -- The other parameters have class constraints. See also #9220.
 type role STUArray nominal nominal nominal
-#endif
 
 instance Eq (STUArray s i e) where
     STUArray _ _ _ arr1# == STUArray _ _ _ arr2# =
-#if __GLASGOW_HASKELL__ > 706
         isTrue# (sameMutableByteArray# arr1# arr2#)
-#else
-        sameMutableByteArray# arr1# arr2#
-#endif
 
 {-# INLINE unsafeNewArraySTUArray_ #-}
 unsafeNewArraySTUArray_ :: Ix i
@@ -1037,11 +1020,7 @@ instance MArray (STUArray s) Bool (ST s) where
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readWordArray# marr# (bOOL_INDEX i#) s1# of { (# s2#, e# #) ->
-#if __GLASGOW_HASKELL__ > 706
         (# s2#, isTrue# ((e# `and#` bOOL_BIT i#) `neWord#` int2Word# 0#) :: Bool #) }
-#else
-        (# s2#, (e# `and#` bOOL_BIT i# `neWord#` int2Word# 0#) :: Bool #) }
-#endif
     {-# INLINE unsafeWrite #-}
     unsafeWrite (STUArray _ _ _ marr#) (I# i#) e = ST $ \s1# ->
         case bOOL_INDEX i#              of { j# ->
