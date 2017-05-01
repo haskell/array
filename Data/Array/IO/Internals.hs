@@ -22,6 +22,7 @@ module Data.Array.IO.Internals (
     IOUArray(..),        -- instance of: Eq, Typeable
     castIOUArray,        -- :: IOUArray ix a -> IO (IOUArray ix b)
     unsafeThawIOUArray,
+    unsafeFreezeIOUArray
   ) where
 
 import Data.Int
