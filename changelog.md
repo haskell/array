@@ -1,9 +1,11 @@
 # Changelog for [`array` package](http://hackage.haskell.org/package/array)
 
-## 0.5.1.2  *May 2017*
+## 0.5.2.0  *Jul 2017*
 
   * Bundled with GHC 8.2.1
   * Overflow check in `unsafeNewArray` (#229)
+  * Fix and simplify handling of `Bool` arrays
+  * Export `unsafeFreezeIOUArray` from `Data.Array.IO.Internals`
   * Drop support for GHC versions prior to GHC 7.8
 
 ## 0.5.1.1  *Apr 2016*
