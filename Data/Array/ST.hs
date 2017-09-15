@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE RankNTypes #-}
 -----------------------------------------------------------------------------
 -- |
@@ -37,9 +38,11 @@ import GHC.Arr          ( STArray, Array, unsafeFreezeSTArray )
 -- the array before returning it - it uses 'unsafeFreeze' internally, but
 -- this wrapper is a safe interface to that function.
 --
-runSTArray :: (Ix i)
-           => (forall s . ST s (STArray s i e))
-           -> Array i e
+#if __GLASGOW_HASKELL__ >= 711
+runSTArray :: (forall s . ST s (STArray s i e)) -> Array i e
+#else
+runSTArray :: Ix i => (forall s . ST s (STArray s i e)) -> Array i e
+#endif
 runSTArray st = runST (st >>= unsafeFreezeSTArray)
 
 -- | A safe way to create and work with an unboxed mutable array before
@@ -48,9 +51,11 @@ runSTArray st = runST (st >>= unsafeFreezeSTArray)
 -- 'unsafeFreeze' internally, but this wrapper is a safe interface to
 -- that function.
 --
-runSTUArray :: (Ix i)
-           => (forall s . ST s (STUArray s i e))
-           -> UArray i e
+#if __GLASGOW_HASKELL__ >= 711
+runSTUArray :: (forall s . ST s (STUArray s i e)) -> UArray i e
+#else
+runSTUArray :: Ix i => (forall s . ST s (STUArray s i e)) -> UArray i e
+#endif
 runSTUArray st = runST (st >>= unsafeFreezeSTUArray)
 
 
