@@ -54,8 +54,6 @@ module Data.Array (
   ) where
 
 import Data.Ix
-import Data.Typeable ()
-
 import GHC.Arr  -- Most of the hard work is done here
 
 {- $intro

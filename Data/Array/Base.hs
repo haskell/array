@@ -1,5 +1,15 @@
-{-# LANGUAGE BangPatterns, CPP, RankNTypes, MagicHash, UnboxedTuples, MultiParamTypeClasses, FlexibleInstances, FlexibleContexts, DeriveDataTypeable, UnliftedFFITypes #-}
-{-# LANGUAGE RoleAnnotations #-}
+{-# LANGUAGE
+    BangPatterns
+  , CPP
+  , RankNTypes
+  , MagicHash
+  , UnboxedTuples
+  , MultiParamTypeClasses
+  , FlexibleInstances
+  , FlexibleContexts
+  , UnliftedFFITypes
+  , RoleAnnotations
+ #-}
 {-# OPTIONS_HADDOCK hide #-}
 
 -----------------------------------------------------------------------------
@@ -39,7 +49,6 @@ import GHC.Word         ( Word8(..), Word16(..), Word32(..), Word64(..) )
 import GHC.IO           ( stToIO )
 import GHC.IOArray      ( IOArray(..),
                           newIOArray, unsafeReadIOArray, unsafeWriteIOArray )
-import Data.Typeable
 
 #include "MachDeps.h"
 
@@ -398,7 +407,6 @@ instance IArray Arr.Array e where
 -- "Data.Array.Unboxed" instead of "Data.Array").
 --
 data UArray i e = UArray !i !i !Int ByteArray#
-                  deriving Typeable
 -- There are class-based invariants on both parameters. See also #9220.
 type role UArray nominal nominal
 
@@ -979,7 +987,6 @@ instance MArray (STArray s) e (Lazy.ST s) where
 -- don\'t use 'STUArray' if you require the non-strictness that
 -- 'STArray' provides.
 data STUArray s i e = STUArray !i !i !Int (MutableByteArray# s)
-                      deriving Typeable
 -- The "ST" parameter must be nominal for the safety of the ST trick.
 -- The other parameters have class constraints. See also #9220.
 type role STUArray nominal nominal nominal
@@ -1370,11 +1377,7 @@ freeze marr = do
   -- use the safe array creation function here.
   return (listArray (l,u) es)
 
-#if __GLASGOW_HASKELL__ >= 711
 freezeSTUArray :: STUArray s i e -> ST s (UArray i e)
-#else
-freezeSTUArray :: Ix i => STUArray s i e -> ST s (UArray i e)
-#endif
 freezeSTUArray (STUArray l u n marr#) = ST $ \s1# ->
     case sizeofMutableByteArray# marr#  of { n# ->
     case newByteArray# n# s1#           of { (# s2#, marr'# #) ->
@@ -1449,11 +1452,7 @@ thaw arr = case bounds arr of
               | i <- [0 .. n - 1]]
     return marr
 
-#if __GLASGOW_HASKELL__ >= 711
 thawSTUArray :: UArray i e -> ST s (STUArray s i e)
-#else
-thawSTUArray :: Ix i => UArray i e -> ST s (STUArray s i e)
-#endif
 thawSTUArray (UArray l u n arr#) = ST $ \s1# ->
     case sizeofByteArray# arr#          of { n# ->
     case newByteArray# n# s1#           of { (# s2#, marr# #) ->
@@ -1513,11 +1512,7 @@ unsafeThaw :: (Ix i, IArray a e, MArray b e m) => a i e -> m (b i e)
 unsafeThaw = thaw
 
 {-# INLINE unsafeThawSTUArray #-}
-#if __GLASGOW_HASKELL__ >= 711
 unsafeThawSTUArray :: UArray i e -> ST s (STUArray s i e)
-#else
-unsafeThawSTUArray :: Ix i => UArray i e -> ST s (STUArray s i e)
-#endif
 unsafeThawSTUArray (UArray l u n marr#) =
     return (STUArray l u n (unsafeCoerce# marr#))
 
@@ -1527,11 +1522,7 @@ unsafeThawSTUArray (UArray l u n marr#) =
     #-}
 
 {-# INLINE unsafeThawIOArray #-}
-#if __GLASGOW_HASKELL__ >= 711
 unsafeThawIOArray :: Arr.Array ix e -> IO (IOArray ix e)
-#else
-unsafeThawIOArray :: Ix ix => Arr.Array ix e -> IO (IOArray ix e)
-#endif
 unsafeThawIOArray arr = stToIO $ do
     marr <- ArrST.unsafeThawSTArray arr
     return (IOArray marr)
@@ -1540,11 +1531,7 @@ unsafeThawIOArray arr = stToIO $ do
 "unsafeThaw/IOArray"  unsafeThaw = unsafeThawIOArray
     #-}
 
-#if __GLASGOW_HASKELL__ >= 711
 thawIOArray :: Arr.Array ix e -> IO (IOArray ix e)
-#else
-thawIOArray :: Ix ix => Arr.Array ix e -> IO (IOArray ix e)
-#endif
 thawIOArray arr = stToIO $ do
     marr <- ArrST.thawSTArray arr
     return (IOArray marr)
@@ -1553,11 +1540,7 @@ thawIOArray arr = stToIO $ do
 "thaw/IOArray"  thaw = thawIOArray
     #-}
 
-#if __GLASGOW_HASKELL__ >= 711
 freezeIOArray :: IOArray ix e -> IO (Arr.Array ix e)
-#else
-freezeIOArray :: Ix ix => IOArray ix e -> IO (Arr.Array ix e)
-#endif
 freezeIOArray (IOArray marr) = stToIO (ArrST.freezeSTArray marr)
 
 {-# RULES
@@ -1565,11 +1548,7 @@ freezeIOArray (IOArray marr) = stToIO (ArrST.freezeSTArray marr)
     #-}
 
 {-# INLINE unsafeFreezeIOArray #-}
-#if __GLASGOW_HASKELL__ >= 711
 unsafeFreezeIOArray :: IOArray ix e -> IO (Arr.Array ix e)
-#else
-unsafeFreezeIOArray :: Ix ix => IOArray ix e -> IO (Arr.Array ix e)
-#endif
 unsafeFreezeIOArray (IOArray marr) = stToIO (ArrST.unsafeFreezeSTArray marr)
 
 {-# RULES

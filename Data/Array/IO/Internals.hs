@@ -1,6 +1,8 @@
-{-# LANGUAGE DeriveDataTypeable, FlexibleInstances, MultiParamTypeClasses,
-             CPP #-}
-{-# LANGUAGE RoleAnnotations #-}
+{-# LANGUAGE
+    FlexibleInstances
+  , MultiParamTypeClasses
+  , RoleAnnotations
+ #-}
 
 {-# OPTIONS_HADDOCK hide #-}
 -----------------------------------------------------------------------------
@@ -27,15 +29,11 @@ module Data.Array.IO.Internals (
 
 import Data.Int
 import Data.Word
-import Data.Typeable
 
 import Control.Monad.ST         ( RealWorld, stToIO )
 import Foreign.Ptr              ( Ptr, FunPtr )
 import Foreign.StablePtr        ( StablePtr )
 
-#if __GLASGOW_HASKELL__ < 711
-import Data.Ix
-#endif
 import Data.Array.Base
 
 import GHC.IOArray (IOArray(..))
@@ -52,7 +50,6 @@ import GHC.IOArray (IOArray(..))
 --    are supported: see "Data.Array.MArray" for a list of instances.
 --
 newtype IOUArray i e = IOUArray (STUArray RealWorld i e)
-                       deriving Typeable
 -- Both parameters have class-based invariants. See also #9220.
 type role IOUArray nominal nominal
 
@@ -374,11 +371,7 @@ castIOUArray (IOUArray marr) = stToIO $ do
     return (IOUArray marr')
 
 {-# INLINE unsafeThawIOUArray #-}
-#if __GLASGOW_HASKELL__ >= 711
 unsafeThawIOUArray :: UArray ix e -> IO (IOUArray ix e)
-#else
-unsafeThawIOUArray :: Ix ix => UArray ix e -> IO (IOUArray ix e)
-#endif
 unsafeThawIOUArray arr = stToIO $ do
     marr <- unsafeThawSTUArray arr
     return (IOUArray marr)
@@ -387,11 +380,7 @@ unsafeThawIOUArray arr = stToIO $ do
 "unsafeThaw/IOUArray" unsafeThaw = unsafeThawIOUArray
     #-}
 
-#if __GLASGOW_HASKELL__ >= 711
 thawIOUArray :: UArray ix e -> IO (IOUArray ix e)
-#else
-thawIOUArray :: Ix ix => UArray ix e -> IO (IOUArray ix e)
-#endif
 thawIOUArray arr = stToIO $ do
     marr <- thawSTUArray arr
     return (IOUArray marr)
@@ -401,22 +390,14 @@ thawIOUArray arr = stToIO $ do
     #-}
 
 {-# INLINE unsafeFreezeIOUArray #-}
-#if __GLASGOW_HASKELL__ >= 711
 unsafeFreezeIOUArray :: IOUArray ix e -> IO (UArray ix e)
-#else
-unsafeFreezeIOUArray :: Ix ix => IOUArray ix e -> IO (UArray ix e)
-#endif
 unsafeFreezeIOUArray (IOUArray marr) = stToIO (unsafeFreezeSTUArray marr)
 
 {-# RULES
 "unsafeFreeze/IOUArray" unsafeFreeze = unsafeFreezeIOUArray
     #-}
 
-#if __GLASGOW_HASKELL__ >= 711
 freezeIOUArray :: IOUArray ix e -> IO (UArray ix e)
-#else
-freezeIOUArray :: Ix ix => IOUArray ix e -> IO (UArray ix e)
-#endif
 freezeIOUArray (IOUArray marr) = stToIO (freezeSTUArray marr)
 
 {-# RULES
