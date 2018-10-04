@@ -1,8 +1,8 @@
 # Changelog for [`array` package](http://hackage.haskell.org/package/array)
 
-## Next
+## 0.5.3.0  *Oct 2018*
 
-  * Bundled with GHC 8.6.1
+  * Bundled with GHC 8.6.2
   * Drop support for GHC versions prior to GHC 8.0
 
 ## 0.5.2.0  *Jul 2017*
