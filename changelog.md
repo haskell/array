@@ -1,5 +1,9 @@
 # Changelog for [`array` package](http://hackage.haskell.org/package/array)
 
+## Next
+
+* Add a `Read` instance for `UArray`
+
 ## 0.5.3.0  *Oct 2018*
 
   * Bundled with GHC 8.6.2
