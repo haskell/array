@@ -1,6 +1,6 @@
 # Changelog for [`array` package](http://hackage.haskell.org/package/array)
 
-## 0.5.4.0  *TBA*
+## 0.5.4.0  *July 2019*
 
 * Add a `Read` instance for `UArray`
 
