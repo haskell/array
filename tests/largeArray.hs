@@ -1,7 +1,7 @@
 import Data.Array
 
 main :: IO ()
-main = print (((!1).inc.inc.inc.inc.inc.inc.inc.inc.inc.inc) a)
+main = print (((! 1).inc.inc.inc.inc.inc.inc.inc.inc.inc.inc) a)
 
 size :: Int
 size = 60
