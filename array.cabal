@@ -1,5 +1,7 @@
+cabal-version: >= 1.10
 name:          array
 version:       0.5.4.0
+
 -- NOTE: Don't forget to update ./changelog.md
 license:       BSD3
 license-file:  LICENSE
@@ -8,8 +10,6 @@ bug-reports:   https://gitlab.haskell.org/ghc/packages/array/issues
 synopsis:      Mutable and immutable arrays
 category:      Data Structures
 build-type:    Simple
-cabal-version: >=1.10
-tested-with:   GHC==8.4.2, GHC==8.2.1, GHC==8.0.2
 description:
     In addition to providing the "Data.Array" module
     <http://www.haskell.org/onlinereport/haskell2010/haskellch14.html as specified in the Haskell 2010 Language Report>,
