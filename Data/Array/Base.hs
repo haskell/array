@@ -672,7 +672,7 @@ instance IArray UArray Int8 where
     {-# INLINE unsafeArray #-}
     unsafeArray lu ies = runST (unsafeArrayUArray lu ies 0)
     {-# INLINE unsafeAt #-}
-    unsafeAt (UArray _ _ _ arr#) (I# i#) = I8# (narrowInt8# (indexInt8Array# arr# i#))
+    unsafeAt (UArray _ _ _ arr#) (I# i#) = I8# (indexInt8Array# arr# i#)
     {-# INLINE unsafeReplace #-}
     unsafeReplace arr ies = runST (unsafeReplaceUArray arr ies)
     {-# INLINE unsafeAccum #-}
@@ -688,7 +688,7 @@ instance IArray UArray Int16 where
     {-# INLINE unsafeArray #-}
     unsafeArray lu ies = runST (unsafeArrayUArray lu ies 0)
     {-# INLINE unsafeAt #-}
-    unsafeAt (UArray _ _ _ arr#) (I# i#) = I16# (narrowInt16# (indexInt16Array# arr# i#))
+    unsafeAt (UArray _ _ _ arr#) (I# i#) = I16# (indexInt16Array# arr# i#)
     {-# INLINE unsafeReplace #-}
     unsafeReplace arr ies = runST (unsafeReplaceUArray arr ies)
     {-# INLINE unsafeAccum #-}
@@ -704,7 +704,7 @@ instance IArray UArray Int32 where
     {-# INLINE unsafeArray #-}
     unsafeArray lu ies = runST (unsafeArrayUArray lu ies 0)
     {-# INLINE unsafeAt #-}
-    unsafeAt (UArray _ _ _ arr#) (I# i#) = I32# (narrowInt32# (indexInt32Array# arr# i#))
+    unsafeAt (UArray _ _ _ arr#) (I# i#) = I32# (indexInt32Array# arr# i#)
     {-# INLINE unsafeReplace #-}
     unsafeReplace arr ies = runST (unsafeReplaceUArray arr ies)
     {-# INLINE unsafeAccum #-}
@@ -736,7 +736,7 @@ instance IArray UArray Word8 where
     {-# INLINE unsafeArray #-}
     unsafeArray lu ies = runST (unsafeArrayUArray lu ies 0)
     {-# INLINE unsafeAt #-}
-    unsafeAt (UArray _ _ _ arr#) (I# i#) = W8# (narrowWord8# (indexWord8Array# arr# i#))
+    unsafeAt (UArray _ _ _ arr#) (I# i#) = W8# (indexWord8Array# arr# i#)
     {-# INLINE unsafeReplace #-}
     unsafeReplace arr ies = runST (unsafeReplaceUArray arr ies)
     {-# INLINE unsafeAccum #-}
@@ -752,7 +752,7 @@ instance IArray UArray Word16 where
     {-# INLINE unsafeArray #-}
     unsafeArray lu ies = runST (unsafeArrayUArray lu ies 0)
     {-# INLINE unsafeAt #-}
-    unsafeAt (UArray _ _ _ arr#) (I# i#) = W16# (narrowWord16# (indexWord16Array# arr# i#))
+    unsafeAt (UArray _ _ _ arr#) (I# i#) = W16# (indexWord16Array# arr# i#)
     {-# INLINE unsafeReplace #-}
     unsafeReplace arr ies = runST (unsafeReplaceUArray arr ies)
     {-# INLINE unsafeAccum #-}
@@ -768,7 +768,7 @@ instance IArray UArray Word32 where
     {-# INLINE unsafeArray #-}
     unsafeArray lu ies = runST (unsafeArrayUArray lu ies 0)
     {-# INLINE unsafeAt #-}
-    unsafeAt (UArray _ _ _ arr#) (I# i#) = W32# (narrowWord32# (indexWord32Array# arr# i#))
+    unsafeAt (UArray _ _ _ arr#) (I# i#) = W32# (indexWord32Array# arr# i#)
     {-# INLINE unsafeReplace #-}
     unsafeReplace arr ies = runST (unsafeReplaceUArray arr ies)
     {-# INLINE unsafeAccum #-}
@@ -1212,10 +1212,10 @@ instance MArray (STUArray s) Int8 (ST s) where
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readInt8Array# marr# i# s1# of { (# s2#, e# #) ->
-        (# s2#, I8# (narrowInt8# e#) #) }
+        (# s2#, I8# e# #) }
     {-# INLINE unsafeWrite #-}
     unsafeWrite (STUArray _ _ _ marr#) (I# i#) (I8# e#) = ST $ \s1# ->
-        case writeInt8Array# marr# i# (extendInt8# e#) s1# of { s2# ->
+        case writeInt8Array# marr# i# e# s1# of { s2# ->
         (# s2#, () #) }
 
 instance MArray (STUArray s) Int16 (ST s) where
@@ -1230,10 +1230,10 @@ instance MArray (STUArray s) Int16 (ST s) where
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readInt16Array# marr# i# s1# of { (# s2#, e# #) ->
-        (# s2#, I16# (narrowInt16# e#) #) }
+        (# s2#, I16# e# #) }
     {-# INLINE unsafeWrite #-}
     unsafeWrite (STUArray _ _ _ marr#) (I# i#) (I16# e#) = ST $ \s1# ->
-        case writeInt16Array# marr# i# (extendInt16# e#) s1# of { s2# ->
+        case writeInt16Array# marr# i# e# s1# of { s2# ->
         (# s2#, () #) }
 
 instance MArray (STUArray s) Int32 (ST s) where
@@ -1248,10 +1248,10 @@ instance MArray (STUArray s) Int32 (ST s) where
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readInt32Array# marr# i# s1# of { (# s2#, e# #) ->
-        (# s2#, I32# (narrowInt32# e#) #) }
+        (# s2#, I32# e# #) }
     {-# INLINE unsafeWrite #-}
     unsafeWrite (STUArray _ _ _ marr#) (I# i#) (I32# e#) = ST $ \s1# ->
-        case writeInt32Array# marr# i# (extendInt32# e#) s1# of { s2# ->
+        case writeInt32Array# marr# i# e# s1# of { s2# ->
         (# s2#, () #) }
 
 instance MArray (STUArray s) Int64 (ST s) where
@@ -1284,10 +1284,10 @@ instance MArray (STUArray s) Word8 (ST s) where
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readWord8Array# marr# i# s1# of { (# s2#, e# #) ->
-        (# s2#, W8# (narrowWord8# e#) #) }
+        (# s2#, W8# e# #) }
     {-# INLINE unsafeWrite #-}
     unsafeWrite (STUArray _ _ _ marr#) (I# i#) (W8# e#) = ST $ \s1# ->
-        case writeWord8Array# marr# i# (extendWord8# e#) s1# of { s2# ->
+        case writeWord8Array# marr# i# e# s1# of { s2# ->
         (# s2#, () #) }
 
 instance MArray (STUArray s) Word16 (ST s) where
@@ -1302,10 +1302,10 @@ instance MArray (STUArray s) Word16 (ST s) where
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readWord16Array# marr# i# s1# of { (# s2#, e# #) ->
-        (# s2#, W16# (narrowWord16# e#) #) }
+        (# s2#, W16# e# #) }
     {-# INLINE unsafeWrite #-}
     unsafeWrite (STUArray _ _ _ marr#) (I# i#) (W16# e#) = ST $ \s1# ->
-        case writeWord16Array# marr# i# (extendWord16# e#) s1# of { s2# ->
+        case writeWord16Array# marr# i# e# s1# of { s2# ->
         (# s2#, () #) }
 
 instance MArray (STUArray s) Word32 (ST s) where
@@ -1320,10 +1320,10 @@ instance MArray (STUArray s) Word32 (ST s) where
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readWord32Array# marr# i# s1# of { (# s2#, e# #) ->
-        (# s2#, W32# (narrowWord32# e#) #) }
+        (# s2#, W32# e# #) }
     {-# INLINE unsafeWrite #-}
     unsafeWrite (STUArray _ _ _ marr#) (I# i#) (W32# e#) = ST $ \s1# ->
-        case writeWord32Array# marr# i# (extendWord32# e#) s1# of { s2# ->
+        case writeWord32Array# marr# i# e# s1# of { s2# ->
         (# s2#, () #) }
 
 instance MArray (STUArray s) Word64 (ST s) where
