@@ -1,0 +1,25 @@
+build:
+  image: nixos/nix
+  tags:
+    - x86_64-linux
+  script:
+    - |
+      nix-channel --add https://nixos.org/channels/nixos-20.09 nixpkgs
+      nix-env -i git bash curl
+      which curl
+      curl -L https://nixos.org/nix/install | bash
+
+    - |
+      . /root/.nix-profile/etc/profile.d/nix.sh
+      nix-env -iA cachix -f https://cachix.org/api/v1/install
+      cachix use ghc
+
+      git clone https://gitlab.haskell.org/bgamari/ghcs.nix
+
+      nix build -f ./ghcs.nix ghc_9_0_1
+      export GHC="$(realpath ./result/bin/ghc)"
+
+      nix build -f ./ghcs.nix cabal-install
+      export CABAL="$(realpath ./result/bin/cabal)"
+
+      "$CABAL" build -w "$GHC"
