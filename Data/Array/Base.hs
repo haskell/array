@@ -720,7 +720,11 @@ instance IArray UArray Int64 where
     {-# INLINE unsafeArray #-}
     unsafeArray lu ies = runST (unsafeArrayUArray lu ies 0)
     {-# INLINE unsafeAt #-}
+#if WORD_SIZE_IN_BITS < 64
     unsafeAt (UArray _ _ _ arr#) (I# i#) = I64# (indexInt64Array# arr# i#)
+#else
+    unsafeAt (UArray _ _ _ arr#) (I# i#) = I64# (int64ToInt# (indexInt64Array# arr# i#))
+#endif
     {-# INLINE unsafeReplace #-}
     unsafeReplace arr ies = runST (unsafeReplaceUArray arr ies)
     {-# INLINE unsafeAccum #-}
@@ -784,7 +788,11 @@ instance IArray UArray Word64 where
     {-# INLINE unsafeArray #-}
     unsafeArray lu ies = runST (unsafeArrayUArray lu ies 0)
     {-# INLINE unsafeAt #-}
+#if WORD_SIZE_IN_BITS < 64
     unsafeAt (UArray _ _ _ arr#) (I# i#) = W64# (indexWord64Array# arr# i#)
+#else
+    unsafeAt (UArray _ _ _ arr#) (I# i#) = W64# (word64ToWord# (indexWord64Array# arr# i#))
+#endif
     {-# INLINE unsafeReplace #-}
     unsafeReplace arr ies = runST (unsafeReplaceUArray arr ies)
     {-# INLINE unsafeAccum #-}
@@ -1266,10 +1274,18 @@ instance MArray (STUArray s) Int64 (ST s) where
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readInt64Array# marr# i# s1# of { (# s2#, e# #) ->
+#if WORD_SIZE_IN_BITS < 64
         (# s2#, I64# e# #) }
+#else
+        (# s2#, I64# (int64ToInt# e#) #) }
+#endif
     {-# INLINE unsafeWrite #-}
     unsafeWrite (STUArray _ _ _ marr#) (I# i#) (I64# e#) = ST $ \s1# ->
+#if WORD_SIZE_IN_BITS < 64
         case writeInt64Array# marr# i# e# s1# of { s2# ->
+#else
+        case writeInt64Array# marr# i# (intToInt64# e#) s1# of { s2# ->
+#endif
         (# s2#, () #) }
 
 instance MArray (STUArray s) Word8 (ST s) where
@@ -1338,10 +1354,18 @@ instance MArray (STUArray s) Word64 (ST s) where
     {-# INLINE unsafeRead #-}
     unsafeRead (STUArray _ _ _ marr#) (I# i#) = ST $ \s1# ->
         case readWord64Array# marr# i# s1# of { (# s2#, e# #) ->
+#if WORD_SIZE_IN_BITS < 64
         (# s2#, W64# e# #) }
+#else
+        (# s2#, W64# (word64ToWord# e#) #) }
+#endif
     {-# INLINE unsafeWrite #-}
     unsafeWrite (STUArray _ _ _ marr#) (I# i#) (W64# e#) = ST $ \s1# ->
+#if WORD_SIZE_IN_BITS < 64
         case writeWord64Array# marr# i# e# s1# of { s2# ->
+#else
+        case writeWord64Array# marr# i# (wordToWord64# e#) s1# of { s2# ->
+#endif
         (# s2#, () #) }
 
 -----------------------------------------------------------------------------
