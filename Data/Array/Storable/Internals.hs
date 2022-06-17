@@ -1,5 +1,5 @@
 {-# LANGUAGE FlexibleInstances, MultiParamTypeClasses, RoleAnnotations #-}
-{-# OPTIONS_HADDOCK hide #-}
+{-# OPTIONS_HADDOCK not-home #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Array.Storable.Internals
@@ -13,6 +13,18 @@
 -- Actual implementation of "Data.Array.Storable".
 --
 -- @since 0.4.0.0
+--
+-- = WARNING
+--
+-- This module is considered __internal__.
+--
+-- The Package Versioning Policy __does not apply__.
+--
+-- The contents of this module may change __in any way whatsoever__
+-- and __without any warning__ between minor versions of this package.
+--
+-- Authors importing this module are expected to track development
+-- closely.
 -----------------------------------------------------------------------------
 
 module Data.Array.Storable.Internals (

@@ -10,7 +10,7 @@
   , UnliftedFFITypes
   , RoleAnnotations
  #-}
-{-# OPTIONS_HADDOCK hide #-}
+{-# OPTIONS_HADDOCK not-home #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -25,6 +25,17 @@
 -- Basis for IArray and MArray.  Not intended for external consumption;
 -- use IArray or MArray instead.
 --
+-- = WARNING
+--
+-- This module is considered __internal__.
+--
+-- The Package Versioning Policy __does not apply__.
+--
+-- The contents of this module may change __in any way whatsoever__
+-- and __without any warning__ between minor versions of this package.
+--
+-- Authors importing this module are expected to track development
+-- closely.
 -----------------------------------------------------------------------------
 
 module Data.Array.Base where

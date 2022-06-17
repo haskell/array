@@ -4,7 +4,7 @@
   , RoleAnnotations
  #-}
 
-{-# OPTIONS_HADDOCK hide #-}
+{-# OPTIONS_HADDOCK not-home #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Array.IO.Internal
@@ -16,6 +16,18 @@
 -- Portability :  non-portable (uses Data.Array.Base)
 --
 -- Mutable boxed and unboxed arrays in the IO monad.
+--
+-- = WARNING
+--
+-- This module is considered __internal__.
+--
+-- The Package Versioning Policy __does not apply__.
+--
+-- The contents of this module may change __in any way whatsoever__
+-- and __without any warning__ between minor versions of this package.
+--
+-- Authors importing this module are expected to track development
+-- closely.
 --
 -----------------------------------------------------------------------------
 
