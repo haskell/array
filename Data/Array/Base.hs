@@ -662,7 +662,7 @@ instance IArray UArray (StablePtr a) where
 
 -- bogus StablePtr value for initialising a UArray of StablePtr.
 nullStablePtr :: StablePtr a
-nullStablePtr = StablePtr (unsafeCoerce# 0#)
+nullStablePtr = StablePtr (unsafeCoerce# nullAddr#)
 
 instance IArray UArray Int8 where
     {-# INLINE bounds #-}
