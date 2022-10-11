@@ -29,6 +29,7 @@ module Data.Array (
     array,          -- :: (Ix a) => (a,a) -> [(a,b)] -> Array a b
     listArray,      -- :: (Ix a) => (a,a) -> [b] -> Array a b
     accumArray,     -- :: (Ix a) => (b -> c -> b) -> b -> (a,a) -> [(a,c)] -> Array a b
+    genArray,       -- :: (Ix a) => (a,a) -> (a -> b) -> Array a b
     -- * Accessing arrays
     (!),            -- :: (Ix a) => Array a b -> a -> b
     bounds,         -- :: (Ix a) => Array a b -> (a,a)

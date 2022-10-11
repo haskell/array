@@ -182,6 +182,10 @@ listArray :: (IArray a e, Ix i) => (i,i) -> [e] -> a i e
 listArray (l,u) es =
     let n = safeRangeSize (l,u)
     in unsafeArray (l,u) (zip [0 .. n - 1] es)
+--
+-- | Constructs an immutable array using a generator function.
+genArray :: (IArray a e, Ix i) => (i,i) -> (i -> e) -> a i e
+genArray (l,u) f = listArray (l,u) $ map f $ range (l,u)
 
 {-# INLINE listArrayST #-}
 listArrayST :: Ix i => (i,i) -> [e] -> ST s (STArray s i e)

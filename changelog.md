@@ -1,5 +1,9 @@
 # Changelog for [`array` package](http://hackage.haskell.org/package/array)
 
+## 0.5.5.0  *UNRELEASED*
+
+* add the `genArray` function
+
 ## 0.5.4.0  *July 2019*
 
 * Add a `Read` instance for `UArray`
