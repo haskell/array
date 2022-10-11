@@ -2,7 +2,7 @@
 
 ## 0.5.5.0  *UNRELEASED*
 
-* add the `genArray` function
+* add the `genArray` and `newGenArray` function
 
 ## 0.5.4.0  *July 2019*
 

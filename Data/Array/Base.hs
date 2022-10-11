@@ -905,6 +905,15 @@ newListArray (l,u) es = do
     fillFromList 0 es
     return marr
 
+-- | Constructs a mutable array using a generator function.
+-- It invokes the generator function in ascending order of the indices.
+newGenArray :: (MArray a e m, Ix i) => (i,i) -> (i -> m e) -> m (a i e)
+newGenArray (l,u) f = do
+    marr <- newArray_ (l,u)
+    let n = safeRangeSize (l,u)
+    sequence_ [ f i >>= unsafeWrite marr (safeIndex (l,u) n i) | i <- range (l,u)]
+    return marr
+
 {-# INLINE readArray #-}
 -- | Read an element from a mutable array
 readArray :: (MArray a e m, Ix i) => a i e -> i -> m e
