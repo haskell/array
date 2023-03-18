@@ -1,5 +1,10 @@
 # Changelog for [`array` package](http://hackage.haskell.org/package/array)
 
+## NEXT  *TBA*
+
+  * Unboxed Bool arrays no longer cause spurious alarms
+    when used with `-fcheck-prim-bounds`
+
 ## 0.5.5.0  *February 2022*
 
   * Compatibility with GHC's new JavaScript backend.
