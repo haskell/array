@@ -42,7 +42,7 @@ module Data.Array.Base where
 
 import Control.Monad.ST.Lazy ( strictToLazyST )
 import qualified Control.Monad.ST.Lazy as Lazy (ST)
-import Data.Ix ( Ix, range, index, rangeSize )
+import Data.Ix ( Ix, range, index, inRange, rangeSize )
 import Foreign.C.Types
 import Foreign.StablePtr
 
@@ -50,6 +50,7 @@ import Data.Char
 import GHC.Arr          ( STArray )
 import qualified GHC.Arr as Arr
 import qualified GHC.Arr as ArrST
+import GHC.Ix           ( unsafeIndex )
 import GHC.ST           ( ST(..), runST )
 import GHC.Base         ( IO(..), divInt# )
 import GHC.Exts
@@ -267,10 +268,20 @@ type ListUArray e = forall i . Ix i => (i,i) -> [e] -> UArray i e
     #-}
 
 {-# INLINE (!) #-}
--- | Returns the element of an immutable array at the specified index.
+-- | Returns the element of an immutable array at the specified index,
+-- or throws an exception if the index is out of bounds.
 (!) :: (IArray a e, Ix i) => a i e -> i -> e
 (!) arr i = case bounds arr of
               (l,u) -> unsafeAt arr $ safeIndex (l,u) (numElements arr) i
+
+{-# INLINE (!?) #-}
+-- | Returns 'Just' the element of an immutable array at the specified index,
+-- or 'Nothing' if the index is out of bounds.
+(!?) :: (IArray a e, Ix i) => a i e -> i -> Maybe e
+(!?) arr i = let b = bounds arr in
+             if inRange b i
+             then Just $ unsafeAt arr $ unsafeIndex b i
+             else Nothing
 
 {-# INLINE indices #-}
 -- | Returns a list of all the valid indices in an array.

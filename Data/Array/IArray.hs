@@ -32,6 +32,7 @@ module Data.Array.IArray (
 
     -- * Accessing arrays
     (!),        -- :: (IArray a e, Ix i) => a i e -> i -> e
+    (!?),       -- :: (IArray a e, Ix i) => a i e -> i -> Maybe e
     bounds,     -- :: (HasBounds a, Ix i) => a i e -> (i,i)
     indices,    -- :: (HasBounds a, Ix i) => a i e -> [i]
     elems,      -- :: (IArray a e, Ix i) => a i e -> [e]

@@ -7,6 +7,8 @@
   * Unboxed Bool arrays no longer cause spurious alarms
     when used with `-fcheck-prim-bounds`
 
+  * Add `Data.Array.IArray.(!?)`
+
 ## 0.5.5.0  *February 2022*
 
   * Compatibility with GHC's new JavaScript backend.
