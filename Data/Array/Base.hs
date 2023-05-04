@@ -1360,8 +1360,15 @@ instance MArray (STUArray s) Word64 (ST s) where
 
 bOOL_SCALE, wORD_SCALE, dOUBLE_SCALE, fLOAT_SCALE :: Int# -> Int#
 bOOL_SCALE n# =
-    -- + 7 to handle case where n is not divisible by 8
-    (n# +# 7#) `uncheckedIShiftRA#` 3#
+    -- Round the number of bits up to the next whole-word-aligned number
+    -- of bytes to avoid ghc#23132; the addition can signed-overflow but
+    -- that's OK because it will not unsigned-overflow and the logical
+    -- right-shift brings us back in-bounds
+#if SIZEOF_HSWORD == 4
+    ((n# +# 31#) `uncheckedIShiftRL#` 5#) `uncheckedIShiftL#` 2#
+#elif SIZEOF_HSWORD == 8
+    ((n# +# 63#) `uncheckedIShiftRL#` 6#) `uncheckedIShiftL#` 3#
+#endif
 wORD_SCALE   n# = safe_scale scale# n# where !(I# scale#) = SIZEOF_HSWORD
 dOUBLE_SCALE n# = safe_scale scale# n# where !(I# scale#) = SIZEOF_HSDOUBLE
 fLOAT_SCALE  n# = safe_scale scale# n# where !(I# scale#) = SIZEOF_HSFLOAT
