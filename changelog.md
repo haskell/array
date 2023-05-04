@@ -2,6 +2,8 @@
 
 ## NEXT  *TBA*
 
+  * `listArray` and `newListArray` are now good consumers of the input list.
+
   * Unboxed Bool arrays no longer cause spurious alarms
     when used with `-fcheck-prim-bounds`
 

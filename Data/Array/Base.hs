@@ -196,15 +196,7 @@ listArray (l,u) es =
 
 {-# INLINE listArrayST #-}
 listArrayST :: Ix i => (i,i) -> [e] -> ST s (STArray s i e)
-listArrayST (l,u) es = do
-    marr <- newArray_ (l,u)
-    let n = safeRangeSize (l,u)
-    let fillFromList i xs | i == n    = return ()
-                          | otherwise = case xs of
-            []   -> return ()
-            y:ys -> unsafeWrite marr i y >> fillFromList (i+1) ys
-    fillFromList 0 es
-    return marr
+listArrayST = newListArray
 
 {-# RULES
 "listArray/Array" listArray =
@@ -214,15 +206,7 @@ listArrayST (l,u) es = do
 {-# INLINE listUArrayST #-}
 listUArrayST :: (MArray (STUArray s) e (ST s), Ix i)
              => (i,i) -> [e] -> ST s (STUArray s i e)
-listUArrayST (l,u) es = do
-    marr <- newArray_ (l,u)
-    let n = safeRangeSize (l,u)
-    let fillFromList i xs | i == n    = return ()
-                          | otherwise = case xs of
-            []   -> return ()
-            y:ys -> unsafeWrite marr i y >> fillFromList (i+1) ys
-    fillFromList 0 es
-    return marr
+listUArrayST = newListArray
 
 -- I don't know how to write a single rule for listUArrayST, because
 -- the type looks like constrained over 's', which runST doesn't
@@ -897,6 +881,7 @@ instance MArray IOArray e IO where
     unsafeRead  = unsafeReadIOArray
     unsafeWrite = unsafeWriteIOArray
 
+-- See Note [Inlining and fusion]
 {-# INLINE newListArray #-}
 -- | Constructs a mutable array from a list of initial elements.
 -- The list gives the elements of the array in ascending order
@@ -905,11 +890,10 @@ newListArray :: (MArray a e m, Ix i) => (i,i) -> [e] -> m (a i e)
 newListArray (l,u) es = do
     marr <- newArray_ (l,u)
     let n = safeRangeSize (l,u)
-    let fillFromList i xs | i == n    = return ()
-                          | otherwise = case xs of
-            []   -> return ()
-            y:ys -> unsafeWrite marr i y >> fillFromList (i+1) ys
-    fillFromList 0 es
+        f x k i
+            | i == n    = return ()
+            | otherwise = unsafeWrite marr i x >> k (i+1)
+    foldr f (const (return ())) es 0
     return marr
 
 {-# INLINE readArray #-}
@@ -1598,3 +1582,11 @@ unsafeFreezeIOArray (IOArray marr) = stToIO (ArrST.unsafeFreezeSTArray marr)
 
 castSTUArray :: STUArray s ix a -> ST s (STUArray s ix b)
 castSTUArray (STUArray l u n marr#) = return (STUArray l u n marr#)
+
+--------------------------------------------------------------------------------
+
+-- Note [Inlining and fusion]
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- In general, functions here are marked INLINE to allow maximum optimization,
+-- but for some functions that generate and consume lists it is particularly
+-- important to allow list fusion.
