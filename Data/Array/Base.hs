@@ -194,7 +194,7 @@ listArray (l,u) es =
     let n = safeRangeSize (l,u)
     in unsafeArray (l,u) (zip [0 .. n - 1] es)
 
-{-# INLINE listArrayST #-}
+{-# INLINE listArrayST #-}   -- See Note [Inlining and fusion]
 listArrayST :: Ix i => (i,i) -> [e] -> ST s (STArray s i e)
 listArrayST = newListArray
 
@@ -203,7 +203,7 @@ listArrayST = newListArray
     \lu es -> runST (listArrayST lu es >>= ArrST.unsafeFreezeSTArray)
     #-}
 
-{-# INLINE listUArrayST #-}
+{-# INLINE listUArrayST #-}   -- See Note [Inlining and fusion]
 listUArrayST :: (MArray (STUArray s) e (ST s), Ix i)
              => (i,i) -> [e] -> ST s (STUArray s i e)
 listUArrayST = newListArray
@@ -881,8 +881,7 @@ instance MArray IOArray e IO where
     unsafeRead  = unsafeReadIOArray
     unsafeWrite = unsafeWriteIOArray
 
--- See Note [Inlining and fusion]
-{-# INLINE newListArray #-}
+{-# INLINE newListArray #-}   -- See Note [Inlining and fusion]
 -- | Constructs a mutable array from a list of initial elements.
 -- The list gives the elements of the array in ascending order
 -- beginning with the lowest index.
@@ -1587,6 +1586,8 @@ castSTUArray (STUArray l u n marr#) = return (STUArray l u n marr#)
 
 -- Note [Inlining and fusion]
 -- ~~~~~~~~~~~~~~~~~~~~~~~~~~
--- In general, functions here are marked INLINE to allow maximum optimization,
--- but for some functions that generate and consume lists it is particularly
--- important to allow list fusion.
+-- Many functions in this module are marked INLINE because they consume their
+-- input with `foldr`. By inlining them, it is possible that the `foldr` will
+-- meet a `build` from the call site, and beneficial fusion will take place.
+-- That is, they become "good consumers". See array issue #8 for data showing
+-- the perf improvement that comes with fusion.
