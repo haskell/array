@@ -835,23 +835,27 @@ in which the mutable array will be manipulated.
 -}
 class (Monad m) => MArray a e m where
 
-    -- | Returns the bounds of the array
+    -- | Returns the bounds of the array (lowest,highest)
     getBounds      :: Ix i => a i e -> m (i,i)
     -- | Returns the number of elements in the array
     getNumElements :: Ix i => a i e -> m Int
 
     -- | Builds a new array, with every element initialised to the supplied
-    -- value.
+    -- value. The first and second element of the tuple specifies the lowest
+    -- and highest index, respectively.
     newArray    :: Ix i => (i,i) -> e -> m (a i e)
 
     -- | Builds a new array, with every element initialised to an
     -- undefined value. In a monadic context in which operations must
     -- be deterministic (e.g. the ST monad), the array elements are
     -- initialised to a fixed but undefined value, such as zero.
+    -- The first and second element of the tuple specifies the lowest
+    -- and highest index, respectively.
     newArray_ :: Ix i => (i,i) -> m (a i e)
 
     -- | Builds a new array, with every element initialised to an undefined
-    -- value.
+    -- value. The first and second element of the tuple specifies the lowest
+    -- and highest index, respectively.
     unsafeNewArray_ :: Ix i => (i,i) -> m (a i e)
 
     unsafeRead  :: Ix i => a i e -> Int -> m e
@@ -900,7 +904,8 @@ instance MArray IOArray e IO where
 {-# INLINE newListArray #-}   -- See Note [Inlining and fusion]
 -- | Constructs a mutable array from a list of initial elements.
 -- The list gives the elements of the array in ascending order
--- beginning with the lowest index.
+-- beginning with the lowest index. The first and second element
+-- of the tuple specifies the lowest and highest index, respectively.
 newListArray :: (MArray a e m, Ix i) => (i,i) -> [e] -> m (a i e)
 newListArray (l,u) es = do
     marr <- newArray_ (l,u)
