@@ -922,6 +922,31 @@ writeArray marr i e = do
   n <- getNumElements marr
   unsafeWrite marr (safeIndex (l,u) n i) e
 
+{-# INLINE modifyArray #-}
+-- | Modify an element in a mutable array
+--
+-- @since FIXME
+modifyArray :: (MArray a e m, Ix i) => a i e -> i -> (e -> e) -> m ()
+modifyArray marr i f = do
+  (l,u) <- getBounds marr
+  n <- getNumElements marr
+  let idx = safeIndex (l,u) n i
+  x <- unsafeRead marr idx
+  unsafeWrite marr idx (f x)
+
+{-# INLINE modifyArray' #-}
+-- | Modify an element in a mutable array. Strict in the written element.
+--
+-- @since FIXME
+modifyArray' :: (MArray a e m, Ix i) => a i e -> i -> (e -> e) -> m ()
+modifyArray' marr i f = do
+  (l,u) <- getBounds marr
+  n <- getNumElements marr
+  let idx = safeIndex (l,u) n i
+  x <- unsafeRead marr idx
+  let !x' = f x
+  unsafeWrite marr idx x'
+
 {-# INLINE getElems #-}
 -- | Return a list of all the elements of a mutable array
 getElems :: (MArray a e m, Ix i) => a i e -> m [e]

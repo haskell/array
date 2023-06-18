@@ -31,6 +31,8 @@ module Data.Array.MArray (
     -- * Reading and writing mutable arrays
     readArray,    -- :: (MArray a e m, Ix i) => a i e -> i -> m e
     writeArray,   -- :: (MArray a e m, Ix i) => a i e -> i -> e -> m ()
+    modifyArray,
+    modifyArray',
 
     -- * Derived arrays
     mapArray,     -- :: (MArray a e' m, MArray a e m, Ix i) => (e' -> e) -> a i e' -> m (a i e)

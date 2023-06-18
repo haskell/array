@@ -9,6 +9,10 @@
 
   * Add `Data.Array.IArray.(!?)`
 
+  * Add `Data.Array.MArray.modifyArray` and `Data.Array.MArray.modifyArray'`.
+    These are also exposed from `Data.Array.IO`, `Data.Array.ST`, and
+    `Data.Array.Storable`.
+
 ## 0.5.5.0  *February 2022*
 
   * Compatibility with GHC's new JavaScript backend.
