@@ -195,6 +195,11 @@ listArray (l,u) es =
     let n = safeRangeSize (l,u)
     in unsafeArray (l,u) (zip [0 .. n - 1] es)
 
+{-# INLINE genArray #-}
+-- | Constructs an immutable array using a generator function.
+genArray :: (IArray a e, Ix i) => (i,i) -> (i -> e) -> a i e
+genArray (l,u) f = listArray (l,u) $ map f $ range (l,u)
+
 {-# INLINE listArrayST #-}   -- See Note [Inlining and fusion]
 listArrayST :: Ix i => (i,i) -> [e] -> ST s (STArray s i e)
 listArrayST = newListArray
@@ -904,6 +909,16 @@ newListArray (l,u) es = do
             | i == n    = return ()
             | otherwise = unsafeWrite marr i x >> k (i+1)
     foldr f (const (return ())) es 0
+    return marr
+
+{-# INLINE newGenArray #-}
+-- | Constructs a mutable array using a generator function.
+-- It invokes the generator function in ascending order of the indices.
+newGenArray :: (MArray a e m, Ix i) => (i,i) -> (i -> m e) -> m (a i e)
+newGenArray (l,u) f = do
+    marr <- newArray_ (l,u)
+    let n = safeRangeSize (l,u)
+    sequence_ [ f i >>= unsafeWrite marr (safeIndex (l,u) n i) | i <- range (l,u)]
     return marr
 
 {-# INLINE readArray #-}

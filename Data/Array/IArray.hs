@@ -29,6 +29,7 @@ module Data.Array.IArray (
     array,      -- :: (IArray a e, Ix i) => (i,i) -> [(i, e)] -> a i e
     listArray,  -- :: (IArray a e, Ix i) => (i,i) -> [e] -> a i e
     accumArray, -- :: (IArray a e, Ix i) => (e -> e' -> e) -> e -> (i,i) -> [(i, e')] -> a i e
+    genArray,   -- :: (IArray a e, Ix i) => (i,i) -> (i -> e) -> a i e
 
     -- * Accessing arrays
     (!),        -- :: (IArray a e, Ix i) => a i e -> i -> e

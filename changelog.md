@@ -2,6 +2,8 @@
 
 ## NEXT  *TBA*
 
+  * add the `genArray` and `newGenArray` function
+
   * `listArray` and `newListArray` are now good consumers of the input list.
 
   * Unboxed Bool arrays no longer cause spurious alarms
