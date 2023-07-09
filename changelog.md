@@ -1,19 +1,27 @@
 # Changelog for [`array` package](http://hackage.haskell.org/package/array)
 
-## NEXT  *TBA*
+## 0.5.6.0  *July 2023*
 
-  * add the `genArray` and `newGenArray` function
+### Changed
 
-  * `listArray` and `newListArray` are now good consumers of the input list.
+  * `listArray` and `newListArray` are now good consumers of the input list
+  * Bump base bound to `<4.20`
 
-  * Unboxed Bool arrays no longer cause spurious alarms
-    when used with `-fcheck-prim-bounds`
+### Added
 
-  * Add `Data.Array.IArray.(!?)`
-
-  * Add `Data.Array.MArray.modifyArray` and `Data.Array.MArray.modifyArray'`.
+  * Add the `genArray` and `newGenArray` function
+  * Add `Data.Array.MArray.modifyArray` and `Data.Array.MArray.modifyArray'`
     These are also exposed from `Data.Array.IO`, `Data.Array.ST`, and
     `Data.Array.Storable`.
+  * Add `Data.Array.IArray.(!?)`
+
+### Fixed
+
+  * Array docs regarding constructing arrays
+  * Update note [Inlining and fusion]
+  * Unboxed Bool arrays no longer cause spurious alarms
+    when used with `-fcheck-prim-bounds`
+  * Replace Haddock hide pragma with not-home to make the Haddocks more readable
 
 ## 0.5.5.0  *February 2022*
 
