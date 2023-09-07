@@ -834,10 +834,9 @@ same way as for 'IArray'), and also over the type of the monad, @m@,
 in which the mutable array will be manipulated.
 -}
 class (Monad m) => MArray a e m where
-
-    -- | Returns the bounds of the array (lowest,highest)
+    -- | Returns the bounds of the array (lowest,highest).
     getBounds      :: Ix i => a i e -> m (i,i)
-    -- | Returns the number of elements in the array
+    -- | Returns the number of elements in the array.
     getNumElements :: Ix i => a i e -> m Int
 
     -- | Builds a new array, with every element initialised to the supplied
@@ -891,6 +890,8 @@ class (Monad m) => MArray a e m where
     -- why not omit newArray?  Because in the boxed case, we can omit the
     -- default initialisation with undefined values if we *do* know the
     -- initial value and it is constant for all elements.
+
+    {-# MINIMAL getBounds, getNumElements, (newArray | unsafeNewArray_), unsafeRead, unsafeWrite #-}
 
 instance MArray IOArray e IO where
     {-# INLINE getBounds #-}
