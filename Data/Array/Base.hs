@@ -945,7 +945,7 @@ writeArray marr i e = do
 {-# INLINE modifyArray #-}
 -- | Modify an element in a mutable array
 --
--- @since FIXME
+-- @since 0.5.6.0
 modifyArray :: (MArray a e m, Ix i) => a i e -> i -> (e -> e) -> m ()
 modifyArray marr i f = do
   (l,u) <- getBounds marr
@@ -957,7 +957,7 @@ modifyArray marr i f = do
 {-# INLINE modifyArray' #-}
 -- | Modify an element in a mutable array. Strict in the written element.
 --
--- @since FIXME
+-- @since 0.5.6.0
 modifyArray' :: (MArray a e m, Ix i) => a i e -> i -> (e -> e) -> m ()
 modifyArray' marr i f = do
   (l,u) <- getBounds marr
