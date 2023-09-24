@@ -921,10 +921,17 @@ newListArray (l,u) es = do
 -- | Constructs a mutable array using a generator function.
 -- It invokes the generator function in ascending order of the indices.
 newGenArray :: (MArray a e m, Ix i) => (i,i) -> (i -> m e) -> m (a i e)
-newGenArray (l,u) f = do
-    marr <- newArray_ (l,u)
-    let n = safeRangeSize (l,u)
-    sequence_ [ f i >>= unsafeWrite marr (safeIndex (l,u) n i) | i <- range (l,u)]
+newGenArray bnds f = do
+    let n = safeRangeSize bnds
+    marr <- unsafeNewArray_ bnds
+    let g ix k i
+            | i == n    = return ()
+            | otherwise = do
+                x <- f ix
+                unsafeWrite marr i x
+                k (i+1)
+    foldr g (\ !_i -> return ()) (range bnds) 0
+    -- The bang above is important for GHC for unbox the Int.
     return marr
 
 {-# INLINE readArray #-}
