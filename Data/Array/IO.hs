@@ -1,4 +1,4 @@
-{-# LANGUAGE MagicHash, UnliftedFFITypes #-}
+{-# LANGUAGE MagicHash, Trustworthy, UnliftedFFITypes #-}
 
 -----------------------------------------------------------------------------
 -- |
