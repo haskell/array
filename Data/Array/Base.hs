@@ -914,7 +914,8 @@ newListArray (l,u) es = do
         f x k i
             | i == n    = return ()
             | otherwise = unsafeWrite marr i x >> k (i+1)
-    foldr f (const (return ())) es 0
+    foldr f (\ !_i -> return ()) es 0
+    -- The bang above is important for GHC for unbox the Int.
     return marr
 
 {-# INLINE newGenArray #-}
