@@ -1,5 +1,12 @@
 # Changelog for [`array` package](http://hackage.haskell.org/package/array)
 
+## 0.5.7.0  *April 2024*
+
+### Changed
+
+  * `MArray` now has a `MINIMAL` pragma
+  * Optimisation of `newListArray` and `newGenArray`
+
 ## 0.5.6.0  *July 2023*
 
 ### Changed
