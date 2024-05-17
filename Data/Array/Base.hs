@@ -1464,12 +1464,12 @@ freeze marr = do
 
 freezeSTUArray :: STUArray s i e -> ST s (UArray i e)
 freezeSTUArray (STUArray l u n marr#) = ST $ \s1# ->
-    case sizeofMutableByteArray# marr#  of { n# ->
-    case newByteArray# n# s1#           of { (# s2#, marr'# #) ->
+    case getSizeofMutableByteArray# marr# s1# of { (# s2#, n# #) ->
+    case newByteArray# n# s2#           of { (# s3#, marr'# #) ->
     case memcpy_freeze marr'# marr# (fromIntegral (I# n#)) of { IO m ->
-    case unsafeCoerce# m s2#            of { (# s3#, _ #) ->
-    case unsafeFreezeByteArray# marr'# s3# of { (# s4#, arr# #) ->
-    (# s4#, UArray l u n arr# #) }}}}}
+    case unsafeCoerce# m s3#            of { (# s4#, _ #) ->
+    case unsafeFreezeByteArray# marr'# s4# of { (# s5#, arr# #) ->
+    (# s5#, UArray l u n arr# #) }}}}}
 
 foreign import ccall unsafe "memcpy"
     memcpy_freeze :: MutableByteArray# s -> MutableByteArray# s -> CSize
