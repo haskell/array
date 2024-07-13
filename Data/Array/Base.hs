@@ -387,6 +387,94 @@ ixmap :: (IArray a e, Ix i, Ix j) => (i,i) -> (i -> j) -> a j e -> a i e
 ixmap (l,u) f arr =
     array (l,u) [(i, arr ! f i) | i <- range (l,u)]
 
+-- | Lazy right-associative fold.
+--
+-- @since FIXME
+foldrArray :: (IArray a e, Ix i) => (e -> b -> b) -> b -> a i e -> b
+foldrArray f z = \a ->
+    let !n = numElements a
+        go i | i >= n = z
+             | otherwise = f (unsafeAt a i) (go (i+1))
+    in go 0
+{-# INLINE foldrArray #-}
+
+-- | Strict accumulating left-associative fold.
+--
+-- @since FIXME
+foldlArray' :: (IArray a e, Ix i) => (b -> e -> b) -> b -> a i e -> b
+foldlArray' f z0 = \a ->
+    let !n = numElements a
+        go !z i | i >= n = z
+                | otherwise = go (f z (unsafeAt a i)) (i+1)
+    in go z0 0
+{-# INLINE foldlArray' #-}
+
+-- | Lazy left-associative fold.
+--
+-- @since FIXME
+foldlArray :: (IArray a e, Ix i) => (b -> e -> b) -> b -> a i e -> b
+foldlArray f z = \a ->
+    let !n = numElements a
+        go i | i < 0 = z
+             | otherwise = f (go (i-1)) (unsafeAt a i)
+    in go (n-1)
+{-# INLINE foldlArray #-}
+
+-- | Strict accumulating right-associative fold.
+--
+-- @since FIXME
+foldrArray' :: (IArray a e, Ix i) => (e -> b -> b) -> b -> a i e -> b
+foldrArray' f z0 = \a ->
+    let !n = numElements a
+        go i !z | i < 0 = z
+                | otherwise = go (i-1) (f (unsafeAt a i) z)
+    in go (n-1) z0
+{-# INLINE foldrArray' #-}
+
+-- | Map elements to applicative actions, sequence them left-to-right, and
+-- discard the results.
+--
+-- @since FIXME
+traverseArray_
+    :: (IArray a e, Ix i, Applicative f) => (e -> f b) -> a i e -> f ()
+traverseArray_ f = foldrArray (\x z -> f x *> z) (pure ())
+{-# INLINE traverseArray_ #-}
+
+-- | @forArray_@ is 'traverseArray_' with its arguments flipped.
+--
+-- @since FIXME
+forArray_ :: (IArray a e, Ix i, Applicative f) => a i e -> (e -> f b) -> f ()
+forArray_ = flip traverseArray_
+{-# INLINE forArray_ #-}
+
+-- | Strict accumulating left-associative monadic fold.
+--
+-- @since FIXME
+foldlArrayM'
+     :: (IArray a e, Ix i, Monad m) => (b -> e -> m b) -> b -> a i e -> m b
+foldlArrayM' f z0 = \a ->
+    let !n = numElements a
+        go !z i | i >= n = pure z
+                | otherwise = do
+                    z' <- f z (unsafeAt a i)
+                    go z' (i+1)
+    in go z0 0
+{-# INLINE foldlArrayM' #-}
+
+-- | Strict accumulating right-associative monadic fold.
+--
+-- @since FIXME
+foldrArrayM'
+    :: (IArray a e, Ix i, Monad m) => (e -> b -> m b) -> b -> a i e -> m b
+foldrArrayM' f z0 = \a ->
+    let !n = numElements a
+        go i !z | i < 0 = pure z
+                | otherwise = do
+                    z' <- f (unsafeAt a i) z
+                    go (i-1) z'
+    in go (n-1) z0
+{-# INLINE foldrArrayM' #-}
+
 -----------------------------------------------------------------------------
 -- Normal polymorphic arrays
 
@@ -1024,6 +1112,70 @@ mapIndices (l',u') f marr = do
                   unsafeWrite marr' (safeIndex (l',u') n' i') e
               | i' <- range (l',u')]
     return marr'
+
+-- | Strict accumulating left-associative fold.
+--
+-- @since FIXME
+foldlMArray' :: (MArray a e m, Ix i) => (b -> e -> b) -> b -> a i e -> m b
+foldlMArray' f = foldlMArrayM' (\z x -> pure (f z x))
+{-# INLINE foldlMArray' #-}
+
+-- | Strict accumulating right-associative fold.
+--
+-- @since FIXME
+foldrMArray' :: (MArray a e m, Ix i) => (e -> b -> b) -> b -> a i e -> m b
+foldrMArray' f = foldrMArrayM' (\x z -> pure (f x z))
+{-# INLINE foldrMArray' #-}
+
+-- | Strict accumulating left-associative monadic fold.
+--
+-- @since FIXME
+foldlMArrayM' :: (MArray a e m, Ix i) => (b -> e -> m b) -> b -> a i e -> m b
+foldlMArrayM' f z0 = \a -> do
+    !n <- getNumElements a
+    let go !z i | i >= n = pure z
+                | otherwise = do
+                    x <- unsafeRead a i
+                    z' <- f z x
+                    go z' (i+1)
+    go z0 0
+{-# INLINE foldlMArrayM' #-}
+
+-- | Strict accumulating right-associative monadic fold.
+--
+-- @since FIXME
+foldrMArrayM' :: (MArray a e m, Ix i) => (e -> b -> m b) -> b -> a i e -> m b
+foldrMArrayM' f z0 = \a -> do
+    !n <- getNumElements a
+    let go i !z | i < 0 = pure z
+                | otherwise = do
+                    x <- unsafeRead a i
+                    z' <- f x z
+                    go (i-1) z'
+    go (n-1) z0
+{-# INLINE foldrMArrayM' #-}
+
+-- | Map elements to monadic actions, sequence them left-to-right, and discard
+-- the results.
+--
+-- @since FIXME
+mapMArrayM_ :: (MArray a e m, Ix i) => (e -> m b) -> a i e -> m ()
+mapMArrayM_ f = \a -> do
+    !n <- getNumElements a
+    let go i | i >= n = pure ()
+             | otherwise = do
+                 x <- unsafeRead a i
+                 _ <- f x
+                 go (i+1)
+    go 0
+{-# INLINE mapMArrayM_ #-}
+
+-- | @forMArrayM_@ is 'mapMArrayM_' with its arguments flipped.
+--
+-- @since FIXME
+forMArrayM_ :: (MArray a e m, Ix i) => a i e -> (e -> m b) -> m ()
+forMArrayM_ = flip mapMArrayM_
+{-# INLINE forMArrayM_ #-}
 
 -----------------------------------------------------------------------------
 -- Polymorphic non-strict mutable arrays (ST monad)

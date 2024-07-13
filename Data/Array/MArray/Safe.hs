@@ -35,6 +35,14 @@ module Data.Array.MArray.Safe (
     readArray,    -- :: (MArray a e m, Ix i) => a i e -> i -> m e
     writeArray,   -- :: (MArray a e m, Ix i) => a i e -> i -> e -> m ()
 
+    -- * Array folds
+    foldlMArray',
+    foldrMArray',
+    mapMArrayM_,
+    forMArrayM_,
+    foldlMArrayM',
+    foldrMArrayM',
+
     -- * Derived arrays
     mapArray,     -- :: (MArray a e' m, MArray a e m, Ix i) => (e' -> e) -> a i e' -> m (a i e)
     mapIndices,   -- :: (MArray a e m, Ix i, Ix j) => (i,i) -> (i -> j) -> a j e -> m (a i e)

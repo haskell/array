@@ -1,5 +1,14 @@
 # Changelog for [`array` package](http://hackage.haskell.org/package/array)
 
+## Next release
+
+### Added
+
+  * Folds for arrays: `foldrArray`, `foldlArray'`, `foldlArray`, `foldrArray'`,
+    `traverseArray_`, `forArray_`, `foldlArrayM'`, `foldrArrayM'`.
+  * Folds for mutable arrays: `foldlMArray'`, `foldrMArray'`, `mapMArrayM_`,
+    `forMArrayM_`, `foldlMArrayM'`, `foldrMArrayM'`.
+
 ## 0.5.6.0  *July 2023*
 
 ### Changed

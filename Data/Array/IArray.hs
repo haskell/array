@@ -39,6 +39,16 @@ module Data.Array.IArray (
     elems,      -- :: (IArray a e, Ix i) => a i e -> [e]
     assocs,     -- :: (IArray a e, Ix i) => a i e -> [(i, e)]
 
+    -- * Array folds
+    foldrArray,
+    foldlArray',
+    foldlArray,
+    foldrArray',
+    traverseArray_,
+    forArray_,
+    foldlArrayM',
+    foldrArrayM',
+
     -- * Incremental array updates
     (//),       -- :: (IArray a e, Ix i) => a i e -> [(i, e)] -> a i e
     accum,      -- :: (IArray a e, Ix i) => (e -> e' -> e) -> a i e -> [(i, e')] -> a i e
