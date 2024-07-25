@@ -282,6 +282,8 @@ type ListUArray e = forall i . Ix i => (i,i) -> [e] -> UArray i e
 {-# INLINE (!?) #-}
 -- | Returns 'Just' the element of an immutable array at the specified index,
 -- or 'Nothing' if the index is out of bounds.
+--
+-- @since 0.5.6.0
 (!?) :: (IArray a e, Ix i) => a i e -> i -> Maybe e
 (!?) arr i = let b = bounds arr in
              if inRange b i
@@ -921,6 +923,8 @@ newListArray (l,u) es = do
 {-# INLINE newGenArray #-}
 -- | Constructs a mutable array using a generator function.
 -- It invokes the generator function in ascending order of the indices.
+--
+-- @since 0.5.6.0
 newGenArray :: (MArray a e m, Ix i) => (i,i) -> (i -> m e) -> m (a i e)
 newGenArray bnds f = do
     let n = safeRangeSize bnds
