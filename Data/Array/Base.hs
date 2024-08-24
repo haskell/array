@@ -197,6 +197,8 @@ listArray (l,u) es =
 
 {-# INLINE genArray #-}
 -- | Constructs an immutable array using a generator function.
+--
+-- @since 0.5.6.0
 genArray :: (IArray a e, Ix i) => (i,i) -> (i -> e) -> a i e
 genArray (l,u) f = listArray (l,u) $ map f $ range (l,u)
 
