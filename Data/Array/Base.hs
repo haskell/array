@@ -47,10 +47,9 @@ import Foreign.C.Types
 import Foreign.StablePtr
 
 import Data.Char
-import GHC.Arr          ( STArray )
+import GHC.Arr          ( STArray, unsafeIndex )
 import qualified GHC.Arr as Arr
 import qualified GHC.Arr as ArrST
-import GHC.Ix           ( unsafeIndex )
 import GHC.ST           ( ST(..), runST )
 import GHC.Base         ( IO(..), divInt# )
 import GHC.Exts
