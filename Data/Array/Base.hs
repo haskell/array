@@ -388,7 +388,7 @@ ixmap (l,u) f arr =
 
 -- | Lazy right-associative fold.
 --
--- @since FIXME
+-- @since 0.5.8.0
 foldrArray :: (IArray a e, Ix i) => (e -> b -> b) -> b -> a i e -> b
 foldrArray f z = \a ->
     let !n = numElements a
@@ -399,7 +399,7 @@ foldrArray f z = \a ->
 
 -- | Strict accumulating left-associative fold.
 --
--- @since FIXME
+-- @since 0.5.8.0
 foldlArray' :: (IArray a e, Ix i) => (b -> e -> b) -> b -> a i e -> b
 foldlArray' f z0 = \a ->
     let !n = numElements a
@@ -410,7 +410,7 @@ foldlArray' f z0 = \a ->
 
 -- | Lazy left-associative fold.
 --
--- @since FIXME
+-- @since 0.5.8.0
 foldlArray :: (IArray a e, Ix i) => (b -> e -> b) -> b -> a i e -> b
 foldlArray f z = \a ->
     let !n = numElements a
@@ -421,7 +421,7 @@ foldlArray f z = \a ->
 
 -- | Strict accumulating right-associative fold.
 --
--- @since FIXME
+-- @since 0.5.8.0
 foldrArray' :: (IArray a e, Ix i) => (e -> b -> b) -> b -> a i e -> b
 foldrArray' f z0 = \a ->
     let !n = numElements a
@@ -433,7 +433,7 @@ foldrArray' f z0 = \a ->
 -- | Map elements to applicative actions, sequence them left-to-right, and
 -- discard the results.
 --
--- @since FIXME
+-- @since 0.5.8.0
 traverseArray_
     :: (IArray a e, Ix i, Applicative f) => (e -> f b) -> a i e -> f ()
 traverseArray_ f = foldrArray (\x z -> f x *> z) (pure ())
@@ -441,14 +441,14 @@ traverseArray_ f = foldrArray (\x z -> f x *> z) (pure ())
 
 -- | @forArray_@ is 'traverseArray_' with its arguments flipped.
 --
--- @since FIXME
+-- @since 0.5.8.0
 forArray_ :: (IArray a e, Ix i, Applicative f) => a i e -> (e -> f b) -> f ()
 forArray_ = flip traverseArray_
 {-# INLINE forArray_ #-}
 
 -- | Strict accumulating left-associative monadic fold.
 --
--- @since FIXME
+-- @since 0.5.8.0
 foldlArrayM'
      :: (IArray a e, Ix i, Monad m) => (b -> e -> m b) -> b -> a i e -> m b
 foldlArrayM' f z0 = \a ->
@@ -462,7 +462,7 @@ foldlArrayM' f z0 = \a ->
 
 -- | Strict accumulating right-associative monadic fold.
 --
--- @since FIXME
+-- @since 0.5.8.0
 foldrArrayM'
     :: (IArray a e, Ix i, Monad m) => (e -> b -> m b) -> b -> a i e -> m b
 foldrArrayM' f z0 = \a ->
@@ -1114,21 +1114,21 @@ mapIndices (l',u') f marr = do
 
 -- | Strict accumulating left-associative fold.
 --
--- @since FIXME
+-- @since 0.5.8.0
 foldlMArray' :: (MArray a e m, Ix i) => (b -> e -> b) -> b -> a i e -> m b
 foldlMArray' f = foldlMArrayM' (\z x -> pure (f z x))
 {-# INLINE foldlMArray' #-}
 
 -- | Strict accumulating right-associative fold.
 --
--- @since FIXME
+-- @since 0.5.8.0
 foldrMArray' :: (MArray a e m, Ix i) => (e -> b -> b) -> b -> a i e -> m b
 foldrMArray' f = foldrMArrayM' (\x z -> pure (f x z))
 {-# INLINE foldrMArray' #-}
 
 -- | Strict accumulating left-associative monadic fold.
 --
--- @since FIXME
+-- @since 0.5.8.0
 foldlMArrayM' :: (MArray a e m, Ix i) => (b -> e -> m b) -> b -> a i e -> m b
 foldlMArrayM' f z0 = \a -> do
     !n <- getNumElements a
@@ -1142,7 +1142,7 @@ foldlMArrayM' f z0 = \a -> do
 
 -- | Strict accumulating right-associative monadic fold.
 --
--- @since FIXME
+-- @since 0.5.8.0
 foldrMArrayM' :: (MArray a e m, Ix i) => (e -> b -> m b) -> b -> a i e -> m b
 foldrMArrayM' f z0 = \a -> do
     !n <- getNumElements a
@@ -1157,7 +1157,7 @@ foldrMArrayM' f z0 = \a -> do
 -- | Map elements to monadic actions, sequence them left-to-right, and discard
 -- the results.
 --
--- @since FIXME
+-- @since 0.5.8.0
 mapMArrayM_ :: (MArray a e m, Ix i) => (e -> m b) -> a i e -> m ()
 mapMArrayM_ f = \a -> do
     !n <- getNumElements a
@@ -1171,7 +1171,7 @@ mapMArrayM_ f = \a -> do
 
 -- | @forMArrayM_@ is 'mapMArrayM_' with its arguments flipped.
 --
--- @since FIXME
+-- @since 0.5.8.0
 forMArrayM_ :: (MArray a e m, Ix i) => a i e -> (e -> m b) -> m ()
 forMArrayM_ = flip mapMArrayM_
 {-# INLINE forMArrayM_ #-}

@@ -1,6 +1,6 @@
 # Changelog for [`array` package](http://hackage.haskell.org/package/array)
 
-## Next release
+## 0.5.8.0 *Aug 2024*
 
 ### Added
 
@@ -8,6 +8,17 @@
     `traverseArray_`, `forArray_`, `foldlArrayM'`, `foldrArrayM'`.
   * Folds for mutable arrays: `foldlMArray'`, `foldrMArray'`, `mapMArrayM_`,
     `forMArrayM_`, `foldlMArrayM'`, `foldrMArrayM'`.
+
+### Fixed
+
+  * Fix a build error that the package can't be buildable before `base-4.14`.
+
+## 0.5.7.0  *April 2024*
+
+### Changed
+
+  * `MArray` now has a `MINIMAL` pragma
+  * Optimisation of `newListArray` and `newGenArray`
 
 ## 0.5.6.0  *July 2023*
 
