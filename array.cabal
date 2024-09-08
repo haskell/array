@@ -1,6 +1,6 @@
 cabal-version: >= 1.10
 name:          array
-version:       0.5.6.0
+version:       0.5.8.0
 
 -- NOTE: Don't forget to update ./changelog.md
 license:       BSD3
