@@ -17,16 +17,14 @@ jobs:
 
     name: Build on ${{ matrix.os }} with GHC ${{ matrix.ghc }}
 
+    continue-on-error: true
+
     steps:
       - uses: actions/checkout@v4
-      - name: continue-on-error Comment
-        uses: mainmatter/continue-on-error-comment@v1
       - uses: haskell-actions/setup@v2
         with:
           ghc-version: ${{ matrix.ghc }}
-        continue-on-error: true
       - run: cabal build
-        continue-on-error: true
       - uses: actions/upload-artifact@v4
         with:
           name: ghcup-dump-log-${{ matrix.os }}-${{ matrix.ghc }}
