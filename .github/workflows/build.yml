@@ -25,5 +25,5 @@ jobs:
       - run: cabal build
       - uses: actions/upload-artifact@v4
         with:
-          name: ghcup-dump-log
+          name: ghcup-dump-log-${{ matrix.os }}-${{ matrix.ghc }}
           path: /usr/local/.ghcup/logs
