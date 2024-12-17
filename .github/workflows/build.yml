@@ -25,5 +25,5 @@ jobs:
       - run: cabal build
       - uses: actions/upload-artifact@v4
         with:
-          name: ghcup
+          name: ghcup-dump-log
           path: /usr/local/.ghcup/logs
