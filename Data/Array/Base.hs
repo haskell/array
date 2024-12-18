@@ -587,11 +587,6 @@ cmpIntUArray arr1@(UArray l1 u1 n1 _) arr2@(UArray l2 u2 n2 _) =
 -----------------------------------------------------------------------------
 -- Showing and Reading IArrays
 
-{-# SPECIALISE
-    showsIArray :: (IArray UArray e, Ix i, Show i, Show e) =>
-                   Int -> UArray i e -> ShowS
-  #-}
-
 showsIArray :: (IArray a e, Ix i, Show i, Show e) => Int -> a i e -> ShowS
 showsIArray p a =
     showParen (p > appPrec) $
@@ -599,11 +594,7 @@ showsIArray p a =
     shows (bounds a) .
     showChar ' ' .
     shows (assocs a)
-
-{-# SPECIALISE
-    readIArray :: (IArray UArray e, Ix i, Read i, Read e) =>
-                   ReadPrec (UArray i e)
-  #-}
+    
 
 readIArray :: (IArray a e, Ix i, Read i, Read e) => ReadPrec (a i e)
 readIArray = parens $ prec appPrec $
