@@ -57,13 +57,6 @@ import Data.Ix
 import GHC.Arr  -- Most of the hard work is done here
 
 {- $intro
-Haskell provides indexable /arrays/, which may be thought of as functions
-whose domains are isomorphic to contiguous subsets of the integers.
-Functions restricted in this way can be implemented efficiently;
-in particular, a programmer may reasonably expect rapid access to
-the components.  To ensure the possibility of such an implementation,
-arrays are treated as data, not as general functions.
-
 Since most array functions involve the class 'Ix', this module is exported
 from "Data.Array" so that modules need not import both "Data.Array" and
 "Data.Ix".
