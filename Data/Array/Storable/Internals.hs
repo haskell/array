@@ -72,7 +72,7 @@ instance Storable e => MArray StorableArray e IO where
 -- |The pointer to the array contents is obtained by 'withStorableArray'.
 -- The idea is similar to 'ForeignPtr' (used internally here).
 -- The pointer should be used only during execution of the 'IO' action
--- retured by the function passed as argument to 'withStorableArray'.
+-- returned by the function passed as argument to 'withStorableArray'.
 withStorableArray :: StorableArray i e -> (Ptr e -> IO a) -> IO a
 withStorableArray (StorableArray _ _ _ fp) f = withForeignPtr fp f
 
